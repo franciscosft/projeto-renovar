@@ -1,0 +1,9 @@
+[submodule "renovar-webapp"]
+	path = renovar-webapp
+	url = https://github.com/franciscosft/renovar-webapp.git
+[submodule "renovar"]
+	path = renovar
+	url = https://github.com/franciscosft/renovar.git
+[submodule "renovar-tdc-2019"]
+	path = renovar-tdc-2019
+	url = https://github.com/franciscosft/renovar-tdc-2019.git
