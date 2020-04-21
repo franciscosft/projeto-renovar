@@ -1,0 +1,7 @@
+{
+  "name": "RenovarWebApp",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}

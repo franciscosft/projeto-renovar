@@ -1,0 +1,35 @@
+<!--
+  Generated template for the ColetaPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Informações do {{dispositivo.nome}}</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()"> Fechar</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-item>
+    <ion-label floating>Selecionar indicador</ion-label>
+    <ion-select [(ngModel)]="indicador" interface="alert" submitText="Confirmar" cancelText="Cancelar">
+      <ion-option *ngFor="let item of dispositivo.indicadores" [value]="item">{{item.nome}}</ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Início das coletas</ion-label>
+    <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.yestarday"></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label>Fim das coletas</ion-label>
+    <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.today"></ion-datetime>
+  </ion-item>
+  <button ion-button block (click)="buscarColetas(indicador.nome, indicador.id, event.yestarday, event.today)">Buscar</button>
+  <ion-item>
+    <div id="container"></div>
+  </ion-item>
+</ion-content>
