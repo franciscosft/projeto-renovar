@@ -7,3 +7,12 @@
 [submodule "renovar-tdc-2019"]
 	path = renovar-tdc-2019
 	url = https://github.com/franciscosft/renovar-tdc-2019.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/franciscosft/ProjetoRenovar/frontend
+[submodule "backend"]
+	path = backend
+	url = https://github.com/franciscosft/ProjetoRenovar/backend
+[submodule "apresentacoes"]
+	path = apresentacoes
+	url = https://github.com/franciscosft/ProjetoRenovar/apresentacoes
