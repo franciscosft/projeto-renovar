@@ -1,25 +1,24 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
-/**
- * Generated class for the CadastroPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
 @Component({
-  selector: 'page-cadastro',
+  selector: 'app-cadastro',
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: 'cadastro.html',
+  styleUrl: 'cadastro.scss'
 })
 export class CadastroPage {
+  nome = '';
+  sobrenome = '';
+  email = '';
+  senha = '';
+  confirmarSenha = '';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(private router: Router) {}
+
+  voltar() {
+    this.router.navigate(['/home']);
   }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad CadastroPage');
-  }
-
 }

@@ -1,35 +1,29 @@
-<!--
-  Generated template for the ColetaPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
-<ion-header>
-  <ion-navbar>
-    <ion-title>Informações do {{dispositivo.nome}}</ion-title>
-    <ion-buttons start>
-      <button ion-button (click)="dismiss()"> Fechar</button>
-    </ion-buttons>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  <ion-item>
-    <ion-label floating>Selecionar indicador</ion-label>
-    <ion-select [(ngModel)]="indicador" interface="alert" submitText="Confirmar" cancelText="Cancelar">
-      <ion-option *ngFor="let item of dispositivo.indicadores" [value]="item">{{item.nome}}</ion-option>
-    </ion-select>
-  </ion-item>
-  <ion-item>
-    <ion-label>Início das coletas</ion-label>
-    <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.yestarday"></ion-datetime>
-  </ion-item>
-  <ion-item>
-    <ion-label>Fim das coletas</ion-label>
-    <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.today"></ion-datetime>
-  </ion-item>
-  <button ion-button block (click)="buscarColetas(indicador.nome, indicador.id, event.yestarday, event.today)">Buscar</button>
-  <ion-item>
-    <div id="container"></div>
-  </ion-item>
-</ion-content>
+<div class="page-container">
+  <div class="page-header">
+    <button class="back-btn" (click)="voltar()">Fechar</button>
+    <h1>{{ dispositivo?.nome }}</h1>
+  </div>
+  <div class="page-content">
+    <div class="form-group">
+      <label>Selecionar indicador</label>
+      <select [(ngModel)]="selectedIndicador" name="indicador">
+        <option [ngValue]="null" disabled>Selecione...</option>
+        @for (item of dispositivo?.indicadores; track item.id) {
+          <option [ngValue]="item">{{ item.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Início das coletas</label>
+      <input type="date" [(ngModel)]="event.inicio" name="inicio">
+    </div>
+    <div class="form-group">
+      <label>Fim das coletas</label>
+      <input type="date" [(ngModel)]="event.fim" name="fim">
+    </div>
+    <button class="btn btn-primary" (click)="buscarColetas()" [disabled]="!selectedIndicador">
+      Buscar
+    </button>
+    <div id="container" class="chart-container"></div>
+  </div>
+</div>

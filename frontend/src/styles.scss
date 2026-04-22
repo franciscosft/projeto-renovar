@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #f4f4f4;
+}
+
+a {
+  color: #488aff;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+}
+
+.page-header {
+  background: #488aff;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+
+.page-header h1 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.page-header .back-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.page-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #488aff;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: #488aff;
+  color: #fff;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #3a7ae0;
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
+}

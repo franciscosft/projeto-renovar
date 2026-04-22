@@ -1,11 +1,2 @@
-import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
-import { DocumentacaoPage } from './documentacao';
-
-@NgModule({
-  declarations: [DocumentacaoPage],
-  imports: [
-    IonicPageModule.forChild(DocumentacaoPage),
-  ],
-})
-export class DocumentacaoPageModule {}
+// Substituído por standalone component. Este arquivo não é mais utilizado.
+export {};

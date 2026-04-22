@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
-
-@IonicPage()
 @Component({
-  selector: 'page-login',
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: 'login.html',
+  styleUrl: 'login.scss'
 })
 export class LoginPage {
+  email = '';
+  senha = '';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(private router: Router) {}
+
+  voltar() {
+    this.router.navigate(['/home']);
   }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
-  }
-
 }

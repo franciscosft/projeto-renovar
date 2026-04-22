@@ -1,39 +1,36 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>cadastro</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  <h3>Preencha o cadastro para se registrar</h3>
-  <form>
-    <ion-segment>
-      <ion-item>
-        <ion-label stacked>Nome</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Sobrenome</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
-    </ion-segment>
-    <ion-item>
-      <ion-label stacked>E-mail</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
-    <ion-segment>
-      <ion-item>
-        <ion-label stacked>Senha</ion-label>
-        <ion-input type="password"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Confirmar a senha</ion-label>
-        <ion-input type="password"></ion-input>
-      </ion-item>
-    </ion-segment>
-    <div padding>
-            <button ion-button block>Registrar</button>
-    </div>
-  </form>
-
-</ion-content>
+<div class="page-container">
+  <div class="page-header">
+    <button class="back-btn" (click)="voltar()">Voltar</button>
+    <h1>Cadastro</h1>
+  </div>
+  <div class="page-content">
+    <h3>Preencha o cadastro para se registrar</h3>
+    <form>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" [(ngModel)]="nome" name="nome">
+        </div>
+        <div class="form-group">
+          <label>Sobrenome</label>
+          <input type="text" [(ngModel)]="sobrenome" name="sobrenome">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" [(ngModel)]="email" name="email">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" [(ngModel)]="senha" name="senha">
+        </div>
+        <div class="form-group">
+          <label>Confirmar a senha</label>
+          <input type="password" [(ngModel)]="confirmarSenha" name="confirmarSenha">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Registrar</button>
+    </form>
+  </div>
+</div>

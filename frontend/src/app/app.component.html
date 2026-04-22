@@ -1,0 +1,16 @@
+<header class="top-nav">
+  <span class="brand">Renovar</span>
+  <nav>
+    <ul>
+      @for (page of pages; track page.path) {
+        <li>
+          <a [routerLink]="page.path" routerLinkActive="active">{{ page.title }}</a>
+        </li>
+      }
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>

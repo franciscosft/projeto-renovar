@@ -1,18 +1,14 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { API_CONFIG } from "../../config/api.config";
-import { Observable } from "rxjs/Rx";
-import { IndicadorDTO } from "../../models/indicador.dto";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { API_CONFIG } from '../../config/api.config';
+import { IndicadorDTO } from '../../models/indicador.dto';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class IndicadorService {
+  constructor(private http: HttpClient) {}
 
-    constructor(public http: HttpClient) {
-    }
-    
-    findById(idIndicador : number) : Observable<IndicadorDTO>{
-        return this.http.get<IndicadorDTO>(`${API_CONFIG.baseUrl}/indicadores/${idIndicador}`);
-    }
+  findById(idIndicador: number): Observable<IndicadorDTO> {
+    return this.http.get<IndicadorDTO>(`${API_CONFIG.baseUrl}/indicadores/${idIndicador}`);
+  }
 }
-
-

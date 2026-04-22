@@ -1,43 +1,33 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { DocumentationService } from '../../services/domain/documentation.service';
-import { PostDTO } from '../../models/post.dto';
-import { HomePage } from '../home/home';
 
-@IonicPage()
 @Component({
-  selector: 'page-documentacao',
+  selector: 'app-documentacao',
+  standalone: true,
   templateUrl: 'documentacao.html',
+  styleUrl: 'documentacao.scss'
 })
-export class DocumentacaoPage {
-  
-  titulo: string;
-  texto: string;
+export class DocumentacaoPage implements OnInit {
+  titulo = '';
+  texto = '';
 
-  homePage : HomePage;
+  constructor(
+    private router: Router,
+    private documentationService: DocumentationService
+  ) {}
 
-  constructor(public navCtrl: NavController, 
-              public navParams: NavParams,
-              public viewCtrl: ViewController,
-              public documentationService: DocumentationService) {
+  ngOnInit() {
+    this.documentationService.findDocumentation().subscribe({
+      next: res => {
+        this.titulo = res.title.rendered;
+        this.texto = res.content.rendered;
+      },
+      error: () => {}
+    });
   }
 
-  ionViewDidLoad() {
-     this.documentationService.findDocumentation().subscribe(res => {
-      console.log(res);
-      this.titulo = res.title.rendered;
-      this.texto = res.content.rendered;
-
-      document.getElementById('textoPost').innerHTML = this.texto;
-
-      // console.log("Aqui " + this.titulo);
-     });
+  voltar() {
+    this.router.navigate(['/home']);
   }
-
-  dismiss() {
-    this.navCtrl.setRoot(HomePage);
-    // this.navCtrl.push('HomePage')
-    // this.viewCtrl.dismiss(this);
-  }
-
 }
