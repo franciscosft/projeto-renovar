@@ -11,9 +11,12 @@ import com.renovar.services.DBService;
 @Profile("test")
 public class TestConfig {
 
-	@Autowired
-	DBService service;
-	
+	private DBService service;
+
+	public TestConfig(DBService service) {
+		this.service = service;
+	}
+
 	@Bean
 	public boolean  instanciarBandoDeDados() throws InterruptedException {
 		service.instanciarBancoDeDados();

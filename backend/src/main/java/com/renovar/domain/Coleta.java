@@ -26,7 +26,7 @@ import lombok.ToString;
 @Entity
 public class Coleta implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8861764815033131944L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

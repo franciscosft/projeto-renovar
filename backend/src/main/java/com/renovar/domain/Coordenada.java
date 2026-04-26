@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Coordenada implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
 	private Double latitude;
 	private Double longitude;
 
