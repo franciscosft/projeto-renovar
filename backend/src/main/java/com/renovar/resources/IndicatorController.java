@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.renovar.domain.Indicator;
 import com.renovar.dto.IndicatorResponseDTO;
+import com.renovar.mapper.IndicatorMapper;
 import com.renovar.services.IndicatorService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +35,9 @@ public class IndicatorController {
     @Autowired
     private IndicatorService service;
 
+    @Autowired
+    private IndicatorMapper mapper;
+
     @Operation(summary = "Get indicator by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Indicator found"),
@@ -43,7 +47,7 @@ public class IndicatorController {
     @GetMapping("/{id}")
     public ResponseEntity<IndicatorResponseDTO> getIndicator(
             @Parameter(description = "Indicator ID") @PathVariable Integer id) {
-        return ResponseEntity.ok(IndicatorResponseDTO.from(service.findById(id)));
+        return ResponseEntity.ok(mapper.toDTO(service.findById(id)));
     }
 
     @Operation(summary = "Get all indicators")
@@ -51,7 +55,7 @@ public class IndicatorController {
     @GetMapping
     public ResponseEntity<List<IndicatorResponseDTO>> getIndicators() {
         List<IndicatorResponseDTO> dtos = service.findAll().stream()
-                .map(IndicatorResponseDTO::from)
+                .map(mapper::toDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
