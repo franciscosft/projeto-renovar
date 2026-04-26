@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.renovar.domain.User;
 import com.renovar.dto.UserDTO;
+import com.renovar.mapper.UserMapper;
 import com.renovar.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,9 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private UserMapper mapper;
+
     @Operation(summary = "Get user by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "User found"),
@@ -43,7 +47,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(
             @Parameter(description = "User ID") @PathVariable Integer id) {
-        return ResponseEntity.ok(UserDTO.from(service.findById(id)));
+        return ResponseEntity.ok(mapper.toDTO(service.findById(id)));
     }
 
     @Operation(summary = "Get all users")
@@ -51,7 +55,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDTO>> getUsers() {
         List<UserDTO> dtos = service.findAll().stream()
-                .map(UserDTO::from)
+                .map(mapper::toDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
@@ -69,13 +73,13 @@ public class UserController {
     }
 
     @Operation(summary = "Get users paginated")
-    @GetMapping("/pagina")
+    @GetMapping("/page")
     public ResponseEntity<Page<UserDTO>> getPage(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "24") Integer pageSize,
             @RequestParam(value = "orderBy", defaultValue = "email") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-        Page<UserDTO> dtos = service.findPage(page, pageSize, orderBy, direction).map(UserDTO::from);
+        Page<UserDTO> dtos = service.findPage(page, pageSize, orderBy, direction).map(mapper::toDTO);
         return ResponseEntity.ok(dtos);
     }
 

@@ -64,7 +64,7 @@ public class ReadingController {
     @Operation(summary = "Get all readings for a device")
     @ApiResponse(responseCode = "200", description = "List of readings ordered by timestamp descending")
     @CrossOrigin
-    @GetMapping("/dispositivo/{deviceId}")
+    @GetMapping("/device/{deviceId}")
     public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDevice(
             @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
         List<Reading> readings = service.findByDeviceId(deviceId);
@@ -91,12 +91,12 @@ public class ReadingController {
         @ApiResponse(responseCode = "400", description = "Missing start or end date")
     })
     @CrossOrigin
-    @GetMapping("/intervalo/")
+    @GetMapping("/range")
     public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDateRange(
-            @Parameter(description = "Device ID") @RequestParam(value = "idDispositivo", defaultValue = "") Integer deviceId,
-            @Parameter(description = "Indicator ID") @RequestParam(value = "idIndicador", defaultValue = "") Integer indicatorId,
-            @Parameter(description = "Start date (yyyy-MM-dd)") @RequestParam(value = "dataInicio", defaultValue = "") String start,
-            @Parameter(description = "End date (yyyy-MM-dd)") @RequestParam(value = "dataFim", defaultValue = "") String end) {
+            @Parameter(description = "Device ID") @RequestParam(value = "deviceId", defaultValue = "") Integer deviceId,
+            @Parameter(description = "Indicator ID") @RequestParam(value = "indicatorId", defaultValue = "") Integer indicatorId,
+            @Parameter(description = "Start date (yyyy-MM-dd)") @RequestParam(value = "startDate", defaultValue = "") String start,
+            @Parameter(description = "End date (yyyy-MM-dd)") @RequestParam(value = "endDate", defaultValue = "") String end) {
         if (start.isEmpty() || end.isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -111,7 +111,7 @@ public class ReadingController {
     @Operation(summary = "Get readings for a device paginated")
     @GetMapping
     public ResponseEntity<Page<ReadingResponseDTO>> getPage(
-            @RequestParam(value = "idDispositivo", defaultValue = "") Integer deviceId,
+            @RequestParam(value = "deviceId", defaultValue = "") Integer deviceId,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "orderBy", defaultValue = "recorded_at") String orderBy,
@@ -122,7 +122,7 @@ public class ReadingController {
     }
 
     @Operation(summary = "Get all readings (all devices)")
-    @GetMapping("/todas")
+    @GetMapping("/all")
     public ResponseEntity<List<ReadingResponseDTO>> getAll() {
         List<Reading> readings = service.findAll();
         List<ReadingResponseDTO> dtos = readings.stream().map(mapper::toDTO).collect(Collectors.toList());
@@ -134,7 +134,7 @@ public class ReadingController {
         @ApiResponse(responseCode = "200", description = "Latest reading found"),
         @ApiResponse(responseCode = "404", description = "No readings found for this device")
     })
-    @GetMapping("/dispositivo/ultima/{deviceId}")
+    @GetMapping("/device/{deviceId}/latest")
     public ResponseEntity<ReadingResponseDTO> getLastDeviceReading(
             @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
         return ResponseEntity.ok(mapper.toDTO(service.getLastDeviceReading(deviceId)));
@@ -164,7 +164,7 @@ public class ReadingController {
     }
 
     @Operation(summary = "Test endpoint — echoes the received payload to the log")
-    @PostMapping("/teste")
+    @PostMapping("/test")
     public ResponseEntity<Void> test(@RequestBody ReadingRequestDTO dto) {
         log.info("Test parameter: {}", dto);
         return ResponseEntity.noContent().build();

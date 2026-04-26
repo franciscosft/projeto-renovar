@@ -60,7 +60,7 @@ public class DeviceController {
 
     @Operation(summary = "Get all devices")
     @ApiResponse(responseCode = "200", description = "List of all registered devices")
-    @GetMapping("/todos")
+    @GetMapping("/all")
     public ResponseEntity<List<DeviceDTO>> getDevices() {
         log.info("Fetching all devices");
         List<DeviceDTO> dtos = service.findAll().stream().map(mapper::toDTO).collect(Collectors.toList());
@@ -98,7 +98,7 @@ public class DeviceController {
     }
 
     @Operation(summary = "Get devices paginated")
-    @GetMapping("/pagina")
+    @GetMapping("/page")
     public ResponseEntity<Page<DeviceDTO>> getPage(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "10") Integer pageSize,
