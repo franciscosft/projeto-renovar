@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Projeto Renovar API")
-                        .description("API de monitoramento de qualidade ambiental via dispositivos IoT")
+                        .title("Renovar API")
+                        .description("REST API for environmental quality monitoring via IoT devices")
                         .version("0.0.2"));
     }
 

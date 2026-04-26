@@ -1,7 +1,5 @@
 package com.renovar.domain;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coordinate implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Coordinate {
 
     private Double latitude;
     private Double longitude;

@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,9 +27,14 @@ import com.renovar.services.ReadingService;
 import com.renovar.util.RenovarUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Readings", description = "Sensor measurement data collected from IoT devices")
 @RestController
-@RequestMapping(value = "/coletas")
+@RequestMapping("/reading")
 public class ReadingController {
 
     private final Logger log = LoggerFactory.getLogger(ReadingController.class);
@@ -36,37 +42,53 @@ public class ReadingController {
     @Autowired
     private ReadingService service;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @Operation(summary = "Get reading by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Reading found"),
+        @ApiResponse(responseCode = "404", description = "Reading not found")
+    })
+    @GetMapping("/{id}")
     public ResponseEntity<Reading> getReading(@PathVariable Integer id) {
         Reading reading = service.findById(id);
         return ResponseEntity.ok().body(reading);
     }
 
+    @Operation(summary = "Get all readings for a device")
+    @ApiResponse(responseCode = "200", description = "List of readings ordered by timestamp descending")
     @CrossOrigin
-    @RequestMapping(value = "/dispositivo/{deviceId}", method = RequestMethod.GET)
-    public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDevice(@PathVariable Integer deviceId) {
+    @GetMapping("/dispositivo/{deviceId}")
+    public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDevice(
+            @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
         List<Reading> readings = service.findByDeviceId(deviceId);
         List<ReadingResponseDTO> result = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
+    @Operation(summary = "Get readings for a device filtered by indicator")
+    @ApiResponse(responseCode = "200", description = "List of readings ordered by timestamp ascending")
     @CrossOrigin
-    @RequestMapping(value = "/{deviceId}/{indicatorId}", method = RequestMethod.GET)
+    @GetMapping("/{deviceId}/{indicatorId}")
     public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDeviceAndIndicator(
-            @PathVariable Integer deviceId,
-            @PathVariable Integer indicatorId) {
+            @Parameter(description = "Device ID") @PathVariable Integer deviceId,
+            @Parameter(description = "Indicator ID") @PathVariable Integer indicatorId) {
         List<Reading> readings = service.findByDeviceIdAndIndicatorId(deviceId, indicatorId);
         List<ReadingResponseDTO> result = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
+    @Operation(summary = "Get readings within a date range",
+               description = "Dates must be in yyyy-MM-dd format (e.g. 2024-01-15)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Readings within the specified range"),
+        @ApiResponse(responseCode = "400", description = "Missing start or end date")
+    })
     @CrossOrigin
-    @RequestMapping(value = "/intervalo/", method = RequestMethod.GET)
+    @GetMapping("/intervalo/")
     public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDateRange(
-            @RequestParam(value = "idDispositivo", defaultValue = "") Integer deviceId,
-            @RequestParam(value = "idIndicador", defaultValue = "") Integer indicatorId,
-            @RequestParam(value = "dataInicio", defaultValue = "") String start,
-            @RequestParam(value = "dataFim", defaultValue = "") String end) {
+            @Parameter(description = "Device ID") @RequestParam(value = "idDispositivo", defaultValue = "") Integer deviceId,
+            @Parameter(description = "Indicator ID") @RequestParam(value = "idIndicador", defaultValue = "") Integer indicatorId,
+            @Parameter(description = "Start date (yyyy-MM-dd)") @RequestParam(value = "dataInicio", defaultValue = "") String start,
+            @Parameter(description = "End date (yyyy-MM-dd)") @RequestParam(value = "dataFim", defaultValue = "") String end) {
         if (start.isEmpty() || end.isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -78,33 +100,45 @@ public class ReadingController {
         return ResponseEntity.ok().body(result);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @Operation(summary = "Get readings for a device paginated")
+    @GetMapping
     public ResponseEntity<Page<ReadingResponseDTO>> getPage(
             @RequestParam(value = "idDispositivo", defaultValue = "") Integer deviceId,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "5") Integer pageSize,
-            @RequestParam(value = "orderBy", defaultValue = "timestamp") String orderBy,
+            @RequestParam(value = "orderBy", defaultValue = "recorded_at") String orderBy,
             @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
         Page<Reading> readings = service.findByDeviceIdPaged(deviceId, page, pageSize, orderBy, direction);
         Page<ReadingResponseDTO> dtos = readings.map(ReadingResponseDTO::from);
         return ResponseEntity.ok().body(dtos);
     }
 
-    @RequestMapping(value = "/todas", method = RequestMethod.GET)
+    @Operation(summary = "Get all readings (all devices)")
+    @GetMapping("/todas")
     public ResponseEntity<List<ReadingResponseDTO>> getAll() {
         List<Reading> readings = service.findAll();
         List<ReadingResponseDTO> dtos = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
         return ResponseEntity.ok().body(dtos);
     }
 
-    @RequestMapping(value = "/dispositivo/ultima/{deviceId}", method = RequestMethod.GET)
-    public ResponseEntity<Reading> getLastDeviceReading(@PathVariable Integer deviceId) {
+    @Operation(summary = "Get the most recent reading for a device")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Latest reading found"),
+        @ApiResponse(responseCode = "404", description = "No readings found for this device")
+    })
+    @GetMapping("/dispositivo/ultima/{deviceId}")
+    public ResponseEntity<Reading> getLastDeviceReading(
+            @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
         Reading reading = service.getLastDeviceReading(deviceId);
         return ResponseEntity.ok().body(reading);
     }
 
-    @Operation(summary = "Add a new reading")
-    @RequestMapping(method = RequestMethod.POST)
+    @Operation(summary = "Submit a new reading from a device")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Reading created"),
+        @ApiResponse(responseCode = "404", description = "Device or indicator not found")
+    })
+    @PostMapping
     public ResponseEntity<Void> createReading(@RequestBody ReadingRequestDTO dto) {
         Reading reading = service.toReading(dto);
         reading = service.save(reading);
@@ -112,7 +146,8 @@ public class ReadingController {
         return ResponseEntity.created(uri).build();
     }
 
-    @RequestMapping(value = "/teste", method = RequestMethod.POST)
+    @Operation(summary = "Test endpoint — echoes the received payload to the log")
+    @PostMapping("/teste")
     public ResponseEntity<Void> test(@RequestBody ReadingRequestDTO dto) {
         log.info("Test parameter: {}", dto);
         return ResponseEntity.noContent().build();

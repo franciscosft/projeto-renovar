@@ -1,0 +1,97 @@
+services:
+
+  # ─── SQL Server 2022 ──────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: renovar-sqlserver
+    entrypoint: ["/bin/bash", "/scripts/entrypoint.sh"]
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_DB: ${MSSQL_DB}
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./docker/sqlserver/entrypoint.sh:/scripts/entrypoint.sh
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >
+          /opt/mssql-tools18/bin/sqlcmd
+          -S localhost -U SA -P "$$SA_PASSWORD"
+          -Q "SELECT 1" -C -No
+          || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 45s
+    networks:
+      - renovar-net
+
+  # ─── RabbitMQ 3 + Management UI ───────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: renovar-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Management UI → http://localhost:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - renovar-net
+
+  # ─── Backend Spring Boot ───────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: renovar-backend
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      # Datasource — override application-dev.properties
+      SPRING_DATASOURCE_URL: >-
+        jdbc:sqlserver://sqlserver:1433;databaseName=${MSSQL_DB};
+        encrypt=false;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: ${MSSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SA_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.SQLServerDialect
+      SPRING_JPA_SHOW_SQL: "true"
+      # RabbitMQ
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - renovar-net
+
+# ─── Networks ─────────────────────────────────────────────────────
+networks:
+  renovar-net:
+    driver: bridge
+
+# ─── Volumes ──────────────────────────────────────────────────────
+volumes:
+  sqlserver_data:
+  rabbitmq_data:

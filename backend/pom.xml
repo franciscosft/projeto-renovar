@@ -57,10 +57,10 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Conector MySQL atualizado (groupId mudou a partir do 8.0.31) -->
+		<!-- SQL Server JDBC driver (versão gerenciada pelo BOM do Spring Boot) -->
 		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 

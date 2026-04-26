@@ -10,10 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,11 +25,17 @@ import com.renovar.domain.Device;
 import com.renovar.dto.DeviceDTO;
 import com.renovar.services.DeviceService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "Devices", description = "IoT devices that collect environmental measurements")
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/dispositivo")
+@RequestMapping("/devices")
 public class DeviceController {
 
     private static Logger log = LoggerFactory.getLogger(DeviceController.class);
@@ -34,14 +43,22 @@ public class DeviceController {
     @Autowired
     private DeviceService service;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<DeviceDTO> getDevice(@PathVariable Integer id) {
+    @Operation(summary = "Get device by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Device found"),
+        @ApiResponse(responseCode = "404", description = "Device not found")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<DeviceDTO> getDevice(
+            @Parameter(description = "Device ID") @PathVariable Integer id) {
         Device device = service.findById(id);
         DeviceDTO dto = service.toDeviceDTO(device);
         return ResponseEntity.ok().body(dto);
     }
 
-    @RequestMapping(value = "/todos", method = RequestMethod.GET)
+    @Operation(summary = "Get all devices")
+    @ApiResponse(responseCode = "200", description = "List of all registered devices")
+    @GetMapping("/todos")
     public ResponseEntity<List<DeviceDTO>> getDevices() {
         log.info("Fetching all devices");
         List<Device> devices = service.findAll();
@@ -49,7 +66,13 @@ public class DeviceController {
         return ResponseEntity.ok().body(dtos);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @Operation(summary = "Register a new device")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Device created"),
+        @ApiResponse(responseCode = "400", description = "Validation error"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PostMapping
     public ResponseEntity<Void> createDevice(@Valid @RequestBody DeviceDTO dto) {
         log.info("DeviceDTO: {}", dto);
         Device device = service.toDevice(dto);
@@ -58,15 +81,23 @@ public class DeviceController {
         return ResponseEntity.created(uri).build();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> updateDevice(@RequestBody Device device, @PathVariable Integer id) {
+    @Operation(summary = "Update a device's name")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Device updated"),
+        @ApiResponse(responseCode = "404", description = "Device not found")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateDevice(
+            @RequestBody Device device,
+            @Parameter(description = "Device ID") @PathVariable Integer id) {
         log.info("Device: {}", device);
         device.setId(id);
         device = service.update(device);
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(value = "/pagina", method = RequestMethod.GET)
+    @Operation(summary = "Get devices paginated")
+    @GetMapping("/pagina")
     public ResponseEntity<Page<DeviceDTO>> getPage(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "10") Integer pageSize,
@@ -77,8 +108,15 @@ public class DeviceController {
         return ResponseEntity.ok().body(dtos);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteDevice(@PathVariable Integer id) {
+    @Operation(summary = "Delete a device")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Device deleted"),
+        @ApiResponse(responseCode = "400", description = "Cannot delete device with associated readings"),
+        @ApiResponse(responseCode = "404", description = "Device not found")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDevice(
+            @Parameter(description = "Device ID") @PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,0 +1,16 @@
+# IDE
+.idea/
+*.iml
+
+# Claude Code internals
+.claude/
+
+# Environment — never commit secrets
+.env
+
+# Frontend build cache
+frontend/.angular/
+frontend/node_modules/
+
+# Backend build output
+backend/target/

@@ -1,9 +1,8 @@
 package com.renovar.domain;
 
-import java.io.Serializable;
-
 import com.renovar.domain.enums.Unit;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,9 +20,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Entity
-public class Indicator implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Indicator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +31,7 @@ public class Indicator implements Serializable {
     @Setter(AccessLevel.NONE)
     private Integer unitId;
 
+    @Column(name = "threshold")
     private Double limit;
 
     public Indicator(Integer id, String name, Unit unit, Double limit) {

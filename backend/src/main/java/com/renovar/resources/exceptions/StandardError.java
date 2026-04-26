@@ -1,12 +1,9 @@
 package com.renovar.resources.exceptions;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class StandardError implements Serializable {
+public class StandardError {
 
-    private static final long serialVersionUID = 1L;
     private Integer status;
     private String message;
 
@@ -14,7 +11,6 @@ public class StandardError implements Serializable {
     private Long timeStamp;
 
     public StandardError(Integer status, String message, Long timeStamp) {
-        super();
         this.status = status;
         this.message = message;
         this.timeStamp = timeStamp;
