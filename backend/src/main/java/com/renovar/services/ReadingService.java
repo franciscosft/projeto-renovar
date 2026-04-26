@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -20,20 +22,14 @@ import com.renovar.domain.Reading;
 import com.renovar.dto.ReadingRequestDTO;
 import com.renovar.services.exceptions.ObjectNotFoundException;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class ReadingService {
-
-    private final Logger log = LoggerFactory.getLogger(ReadingService.class);
 
     private final ReadingDAO dao;
     private final DeviceService deviceService;
     private final IndicatorService indicatorService;
-
-    public ReadingService(ReadingDAO dao, DeviceService deviceService, IndicatorService indicatorService) {
-        this.dao = dao;
-        this.deviceService = deviceService;
-        this.indicatorService = indicatorService;
-    }
 
     public Reading findById(Integer readingId) {
         Optional<Reading> result = dao.findById(readingId);

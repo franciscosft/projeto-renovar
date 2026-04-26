@@ -3,6 +3,7 @@ package com.renovar.services;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +15,10 @@ import com.renovar.domain.User;
 import com.renovar.services.exceptions.ObjectNotFoundException;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserDAO dao;
+    private final UserDAO dao;
 
     public User findById(Integer id) {
         Optional<User> result = dao.findById(id);

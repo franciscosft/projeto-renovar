@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,13 +31,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Indicators", description = "Measurement types tracked by devices (e.g. CO, temperature, pressure)")
 @RestController
 @RequestMapping("/indicators")
+@AllArgsConstructor
 public class IndicatorController {
 
-    @Autowired
-    private IndicatorService service;
+    private final IndicatorService service;
 
-    @Autowired
-    private IndicatorMapper mapper;
+    private final IndicatorMapper mapper;
 
     @Operation(summary = "Get indicator by ID")
     @ApiResponses({

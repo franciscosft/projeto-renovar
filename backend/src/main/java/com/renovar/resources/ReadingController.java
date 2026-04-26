@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.renovar.domain.Reading;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -35,21 +37,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Slf4j
 @Tag(name = "Readings", description = "Sensor measurement data collected from IoT devices")
 @RestController
 @RequestMapping("/reading")
+@AllArgsConstructor
 public class ReadingController {
 
-    private final Logger log = LoggerFactory.getLogger(ReadingController.class);
+    private final ReadingService service;
 
-    @Autowired
-    private ReadingService service;
+    private final RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-    @Autowired
-    private ReadingMapper mapper;
+    private final ReadingMapper mapper;
 
     @Operation(summary = "Get reading by ID")
     @ApiResponses({

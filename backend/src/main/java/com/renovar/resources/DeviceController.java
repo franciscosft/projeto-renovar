@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +38,14 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("/devices")
+@AllArgsConstructor
 public class DeviceController {
 
     private static Logger log = LoggerFactory.getLogger(DeviceController.class);
 
-    @Autowired
-    private DeviceService service;
+    private final DeviceService service;
 
-    @Autowired
-    private DeviceMapper mapper;
+    private final DeviceMapper mapper;
 
     @Operation(summary = "Get device by ID")
     @ApiResponses({

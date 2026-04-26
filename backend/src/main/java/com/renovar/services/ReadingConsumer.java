@@ -1,5 +1,7 @@
 package com.renovar.services;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -10,13 +12,12 @@ import com.renovar.config.RabbitMQConfig;
 import com.renovar.domain.Reading;
 import com.renovar.dto.ReadingRequestDTO;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class ReadingConsumer {
 
-    private final Logger log = LoggerFactory.getLogger(ReadingConsumer.class);
-
-    @Autowired
-    private ReadingService readingService;
+    private final ReadingService readingService;
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE)
     public void consume(ReadingRequestDTO dto) {

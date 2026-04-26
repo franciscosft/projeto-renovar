@@ -3,6 +3,8 @@ package com.renovar.services;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +21,16 @@ import com.renovar.mapper.DeviceMapper;
 import com.renovar.services.exceptions.DataIntegrityException;
 import com.renovar.services.exceptions.ObjectNotFoundException;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class DeviceService {
 
-    private final Logger log = LoggerFactory.getLogger(DeviceService.class);
+    private final DeviceDAO dao;
 
-    @Autowired
-    private DeviceDAO dao;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private DeviceMapper deviceMapper;
+    private final DeviceMapper deviceMapper;
 
     public Device findById(Integer id) {
         Optional<Device> result = dao.findById(id);

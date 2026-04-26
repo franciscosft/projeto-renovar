@@ -21,7 +21,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString
+@ToString(exclude = "indicators")
 @Entity
 public class Device {
 

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -23,25 +25,16 @@ import com.renovar.domain.enums.Unit;
 
 import jakarta.annotation.PostConstruct;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class DBService {
-
-    private final Logger log = LoggerFactory.getLogger(DBService.class);
 
     private final DeviceDAO deviceDAO;
     private final IndicatorDAO indicatorDAO;
     private final ReadingDAO readingDAO;
     private final UserDAO userDAO;
     private final Environment environment;
-
-    public DBService(DeviceDAO deviceDAO, IndicatorDAO indicatorDAO, ReadingDAO readingDAO,
-                     UserDAO userDAO, Environment environment) {
-        this.deviceDAO = deviceDAO;
-        this.indicatorDAO = indicatorDAO;
-        this.readingDAO = readingDAO;
-        this.userDAO = userDAO;
-        this.environment = environment;
-    }
 
     // ── Seed inicial (somente perfil dev, executa uma única vez) ──────────────
 

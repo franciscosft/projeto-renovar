@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Users", description = "Users who own and manage IoT devices")
 @RestController
 @RequestMapping("/users")
+@AllArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService service;
+    private final UserService service;
 
-    @Autowired
-    private UserMapper mapper;
+    private final UserMapper mapper;
 
     @Operation(summary = "Get user by ID")
     @ApiResponses({

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,10 @@ import com.renovar.domain.Indicator;
 import com.renovar.services.exceptions.ObjectNotFoundException;
 
 @Service
+@AllArgsConstructor
 public class IndicatorService {
 
-    @Autowired
-    private IndicatorDAO dao;
+    private final IndicatorDAO dao;
 
     public Indicator findById(Integer id) {
         Optional<Indicator> result = dao.findById(id);
