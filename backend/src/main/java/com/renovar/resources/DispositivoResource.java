@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public class DispositivoResource {
 			@RequestParam(value = "orderBy", defaultValue = "id") String ordenacao,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direcao) {
 		Page<Dispositivo> dispositivo = service.encontrarPagina(pagina, linhasPagina, ordenacao, direcao);
-		Page<DispositivoDTO> dtos = dispositivo.map(d -> new DispositivoDTO(d));
+		Page<DispositivoDTO> dtos = dispositivo.map(DispositivoDTO::from);
 		return ResponseEntity.ok().body(dtos);
 	}
 

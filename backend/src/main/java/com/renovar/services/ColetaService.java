@@ -1,22 +1,14 @@
 package com.renovar.services;
 
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.crypto.CipherInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.querydsl.binding.OptionalValueBinding;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,14 +24,17 @@ import com.renovar.services.exceptions.ObjectNotFoundException;
 public class ColetaService {
 	private final Logger log = LoggerFactory.getLogger(ColetaService.class);
 
-	@Autowired
-	private ColetaDAO dao;
+	private final ColetaDAO dao;
 
-	@Autowired
-	private DispositivoService dispositivoService;
+	private final DispositivoService dispositivoService;
 
-	@Autowired
-	private IndicadorService indicadorService;
+	private final IndicadorService indicadorService;
+
+	public ColetaService(ColetaDAO dao, DispositivoService dispositivoService, IndicadorService indicadorService) {
+		this.dao = dao;
+		this.dispositivoService = dispositivoService;
+		this.indicadorService = indicadorService;
+	}
 
 	public Coleta buscarColeta(Integer idColeta) {
 		Optional<Coleta> findById = dao.findById(idColeta);
@@ -48,13 +43,11 @@ public class ColetaService {
 	}
 
 	public List<Coleta> buscarColetasDispositivo(Integer idDispositivo) {
-		List<Coleta> coletas = dao.buscarColetasDispositivo(idDispositivo);
-		return coletas;
+        return dao.buscarColetasDispositivo(idDispositivo);
 	}
 	
 	public List<Coleta> buscarColetasDispositivoIndicador(Integer idDispositivo, Integer idIndicador) {
-		List<Coleta> coletas = dao.buscarColetasDispositivoIndicador(idDispositivo, idIndicador);
-		return coletas;
+		return dao.buscarColetasDispositivoIndicador(idDispositivo, idIndicador);
 	}
 	
 	public List<Coleta> buscarColetasDispositivoIndicadorData(Integer idDispositivo, Integer idIndicador,
@@ -90,9 +83,9 @@ public class ColetaService {
 
 	public Coleta toColeta(ColetaRequisicaoDTO coletaDTO) {
 		Date data = new Date();
-		double medida = coletaDTO.getMedida();
-		Integer dispositivoId = coletaDTO.getDispositivoId();
-		Integer indicadorId = coletaDTO.getIndicadorId();
+		double medida = coletaDTO.medida();
+		Integer dispositivoId = coletaDTO.dispositivoId();
+		Integer indicadorId = coletaDTO.indicadorId();
 		Dispositivo dispositivo = dispositivoService.buscar(dispositivoId);
 		Indicador indicador = indicadorService.buscar(indicadorId);
 		Coordenada coordenada = new Coordenada(dispositivo.getLatitude(), dispositivo.getLongitude());

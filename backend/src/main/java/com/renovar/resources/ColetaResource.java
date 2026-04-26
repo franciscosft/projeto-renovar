@@ -20,15 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.renovar.RenovarApplication;
 import com.renovar.domain.Coleta;
 import com.renovar.dto.ColetaRequisicaoDTO;
 import com.renovar.dto.ColetaRespostaDTO;
-import com.renovar.dto.DispositivoDTO;
 import com.renovar.services.ColetaService;
 import com.renovar.util.RenovarUtils;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(value = "/coletas")
@@ -48,7 +46,7 @@ public class ColetaResource {
 	@RequestMapping(value = "/dispositivo/{idDispositivo}", method = RequestMethod.GET)
 	public ResponseEntity<List<ColetaRespostaDTO>> buscarColetasDispositivo(@PathVariable Integer idDispositivo) {
 		List<Coleta> coletas = service.buscarColetasDispositivo(idDispositivo);
-		List<ColetaRespostaDTO> collect = coletas.stream().map(c -> new ColetaRespostaDTO(c))
+		List<ColetaRespostaDTO> collect = coletas.stream().map(ColetaRespostaDTO::from)
 				.collect(Collectors.toList());
 		return ResponseEntity.ok().body(collect);
 	}
@@ -56,10 +54,10 @@ public class ColetaResource {
 	@CrossOrigin
 	@RequestMapping(value = "/{idDispositivo}/{idIndicador}", method = RequestMethod.GET)
 	public ResponseEntity<List<ColetaRespostaDTO>> buscarColetasDispositivoIndicador(
-			@PathVariable Integer idDispositivo, 
+			@PathVariable Integer idDispositivo,
 			@PathVariable Integer idIndicador){
 		List<Coleta> coletas = service.buscarColetasDispositivoIndicador(idDispositivo, idIndicador);
-		List<ColetaRespostaDTO> collect = coletas.stream().map(c -> new ColetaRespostaDTO(c))
+		List<ColetaRespostaDTO> collect = coletas.stream().map(ColetaRespostaDTO::from)
 				.collect(Collectors.toList());
 		return ResponseEntity.ok().body(collect);
 	}
@@ -81,7 +79,7 @@ public class ColetaResource {
 		log.info("Buscando coletas entre {} e {}", dataInicio2, dataFim2);
 		
 		List<Coleta> coletas = service.buscarColetasDispositivoIndicadorData(idDispositivo, idIndicador, dataInicio2, dataFim2);
-		List<ColetaRespostaDTO> collect = coletas.stream().map(c -> new ColetaRespostaDTO(c))
+		List<ColetaRespostaDTO> collect = coletas.stream().map(ColetaRespostaDTO::from)
 				.collect(Collectors.toList());
 		return ResponseEntity.ok().body(collect);
 	}
@@ -95,14 +93,14 @@ public class ColetaResource {
 			@RequestParam(value = "direction", defaultValue = "DESC") String direcao) {
 		Page<Coleta> coleta = service.buscarDispositivoPorPagina(idDispositivo, pagina, linhasPagina, ordenacao,
 				direcao);
-		Page<ColetaRespostaDTO> dtos = coleta.map(c -> new ColetaRespostaDTO(c));
+		Page<ColetaRespostaDTO> dtos = coleta.map(ColetaRespostaDTO::from);
 		return ResponseEntity.ok().body(dtos);
 	}
 
 	@RequestMapping(value = "/todas", method = RequestMethod.GET)
 	public ResponseEntity<List<ColetaRespostaDTO>> buscarTodas() {
 		List<Coleta> coleta = service.buscarTodas();
-		List<ColetaRespostaDTO> dtos = coleta.stream().map(c -> new ColetaRespostaDTO(c)).collect(Collectors.toList());
+		List<ColetaRespostaDTO> dtos = coleta.stream().map(ColetaRespostaDTO::from).collect(Collectors.toList());
 		return ResponseEntity.ok().body(dtos);
 	}
 
@@ -124,7 +122,7 @@ public class ColetaResource {
 	 * @param coletaDTO
 	 * @return
 	 */
-	@ApiOperation(value = "Método utilizado para adicionar uma coleta")
+	@Operation(summary = "Método utilizado para adicionar uma coleta")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> cadastrarColeta(@RequestBody ColetaRequisicaoDTO coletaDTO) {
 		Coleta coleta = service.toColeta(coletaDTO);

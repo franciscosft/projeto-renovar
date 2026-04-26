@@ -61,20 +61,18 @@ public class DispositivoService {
 
 	public Dispositivo toDispositivo(DispositivoDTO sensorDTO) {
 		log.debug("SensorDTO: {}", sensorDTO);
-		return new Dispositivo(sensorDTO.getId(), sensorDTO.getNome(), sensorDTO.getCodigoRastreio(),
-				sensorDTO.getCoordenada(), usuarioService.buscar(sensorDTO.getUsuarioId()));
+		return new Dispositivo(sensorDTO.id(), sensorDTO.nome(), sensorDTO.codigoRastreio(),
+				sensorDTO.coordenada(), usuarioService.buscar(sensorDTO.usuarioId()));
 	}
-	
+
 	public Page<Dispositivo> encontrarPagina(Integer pagina, Integer linhasPagina, String ordenacao, String direcao) {
 		PageRequest pageRequest = PageRequest.of(pagina, linhasPagina, Direction.valueOf(direcao), ordenacao);
 		return dao.findAll(pageRequest);
 	}
-	
+
 	public DispositivoDTO toDispositivoDTO(Dispositivo dispositivo) {
-		DispositivoDTO dispositivoDTO = new DispositivoDTO(dispositivo);
 		log.info("Indicadores: {}", dispositivo.getIndicadores());
-		dispositivoDTO.setIndicadores(dispositivo.getIndicadores());
-		return dispositivoDTO;
+		return DispositivoDTO.from(dispositivo);
 	}
 
 }

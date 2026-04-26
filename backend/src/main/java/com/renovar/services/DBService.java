@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.renovar.RenovarApplication;
 import com.renovar.dao.ColetaDAO;
 import com.renovar.dao.DispositivoDAO;
 import com.renovar.dao.IndicadorDAO;
@@ -27,17 +26,20 @@ import com.renovar.domain.enums.Unidade;
 public class DBService {
 	private final Logger log = LoggerFactory.getLogger(DBService.class);
 
-	@Autowired
-	private DispositivoDAO sensorDAO;
+	private final DispositivoDAO sensorDAO;
 
-	@Autowired
-	private IndicadorDAO indicadorDAO;
+	private final IndicadorDAO indicadorDAO;
 
-	@Autowired
-	private ColetaDAO coletaDAO;
+	private final ColetaDAO coletaDAO;
 
-	@Autowired
-	private UsuarioDAO usuarioDAO;
+	private final UsuarioDAO usuarioDAO;
+
+	public DBService(DispositivoDAO sensorDAO, IndicadorDAO indicadorDAO, ColetaDAO coletaDAO, UsuarioDAO usuarioDAO) {
+		this.sensorDAO = sensorDAO;
+		this.indicadorDAO = indicadorDAO;
+		this.coletaDAO = coletaDAO;
+		this.usuarioDAO = usuarioDAO;
+	}
 
 	public void instanciarBancoDeDados() throws InterruptedException {
 		log.info("Criando objetos mock");

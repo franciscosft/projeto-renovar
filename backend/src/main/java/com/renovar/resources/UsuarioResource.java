@@ -54,7 +54,7 @@ public class UsuarioResource {
 			@RequestParam(value = "orderBy", defaultValue = "nome") String ordenacao,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direcao) {
 		Page<Usuario> usuarios = service.encontrarPagina(pagina, linhasPagina, ordenacao, direcao);
-		Page<UsuarioDTO> dtos = usuarios.map(u -> new UsuarioDTO(u));
+		Page<UsuarioDTO> dtos = usuarios.map(UsuarioDTO::from);
 		return ResponseEntity.ok().body(dtos);
 	}
 
