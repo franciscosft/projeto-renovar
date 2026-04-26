@@ -9,6 +9,8 @@ declare var google: any;
   selector: 'app-home',
   standalone: true,
   templateUrl: 'home.html',
+  imports: [
+  ],
   styleUrl: 'home.scss'
 })
 export class HomePage implements AfterViewInit {
@@ -29,8 +31,8 @@ export class HomePage implements AfterViewInit {
 
   initMap(dispositivos: DispositivoDTO[]) {
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: -27.6001426, lng: -48.5182837 },
       zoom: 18,
-      center: { lat: -27.6001426, lng: -48.5182837 }
     });
 
     dispositivos.forEach(dispositivo => {
