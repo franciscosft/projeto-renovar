@@ -35,10 +35,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import static com.renovar.config.OpenApiConfig.SCHEME_API_KEY;
+import static com.renovar.config.OpenApiConfig.SCHEME_SUBSCRIPTION;
 
 @Slf4j
 @Tag(name = "Readings", description = "Sensor measurement data collected from IoT devices")
+@SecurityRequirement(name = SCHEME_SUBSCRIPTION)
 @RestController
 @RequestMapping("/reading")
 @AllArgsConstructor
@@ -155,6 +160,7 @@ public class ReadingController {
     @Operation(summary = "Asynchronous reading ingestion via RabbitMQ",
                description = "Publishes the reading to the queue and returns immediately. The consumer persists it asynchronously.")
     @ApiResponse(responseCode = "202", description = "Reading accepted for async processing")
+    @SecurityRequirement(name = SCHEME_API_KEY)
     @PostMapping("/ingest")
     public ResponseEntity<Void> ingestReading(@RequestBody ReadingRequestDTO dto) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, dto);

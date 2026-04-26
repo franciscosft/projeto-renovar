@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,17 +29,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import static com.renovar.config.OpenApiConfig.SCHEME_SUBSCRIPTION;
+
+@Slf4j
 @Tag(name = "Devices", description = "IoT devices that collect environmental measurements")
+@SecurityRequirement(name = SCHEME_SUBSCRIPTION)
 @CrossOrigin
 @RestController
 @RequestMapping("/devices")
 @AllArgsConstructor
 public class DeviceController {
-
-    private static Logger log = LoggerFactory.getLogger(DeviceController.class);
 
     private final DeviceService service;
 

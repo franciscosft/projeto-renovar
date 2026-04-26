@@ -27,9 +27,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static com.renovar.config.OpenApiConfig.SCHEME_SUBSCRIPTION;
+
 @Tag(name = "Users", description = "Users who own and manage IoT devices")
+@SecurityRequirement(name = SCHEME_SUBSCRIPTION)
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor

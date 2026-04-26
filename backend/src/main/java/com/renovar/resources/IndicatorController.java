@@ -26,9 +26,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static com.renovar.config.OpenApiConfig.SCHEME_SUBSCRIPTION;
+
 @Tag(name = "Indicators", description = "Measurement types tracked by devices (e.g. CO, temperature, pressure)")
+@SecurityRequirement(name = SCHEME_SUBSCRIPTION)
 @RestController
 @RequestMapping("/indicators")
 @AllArgsConstructor
