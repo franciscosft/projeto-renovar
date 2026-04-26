@@ -1,0 +1,12 @@
+{
+  "name": "renovar-sensor-simulator",
+  "version": "1.0.0",
+  "description": "IoT sensor simulator that publishes readings to RabbitMQ",
+  "main": "sensor-simulator.js",
+  "scripts": {
+    "simulate": "node sensor-simulator.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4"
+  }
+}
