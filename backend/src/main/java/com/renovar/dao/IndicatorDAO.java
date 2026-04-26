@@ -3,9 +3,9 @@ package com.renovar.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.renovar.domain.Dispositivo;
+import com.renovar.domain.Indicator;
 
 @Repository
-public interface DispositivoDAO extends JpaRepository<Dispositivo, Integer> {
+public interface IndicatorDAO extends JpaRepository<Indicator, Integer> {
 
 }

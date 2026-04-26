@@ -7,46 +7,46 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.renovar.dao.UsuarioDAO;
-import com.renovar.domain.Usuario;
+import com.renovar.dao.UserDAO;
+import com.renovar.domain.User;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 public class RenovarApplicationTests {
 
-	@Autowired
-	UsuarioDAO dao;
+    @Autowired
+    UserDAO dao;
 
-	@Test
-	public void contextLoads() {
-	}
+    @Test
+    public void contextLoads() {
+    }
 
-	@Test
-	public void diagnosticarAtualizacao() {
-		Optional<Usuario> findById = dao.findById(1);
-		Usuario usuario2 = findById.get();
-		usuario2.setNome("OutroNome");
+    @Test
+    public void updateDiagnostic() {
+        Optional<User> findById = dao.findById(1);
+        User user = findById.get();
+        user.setName("OtherName");
 
-		List<Usuario> findAll = dao.findAll();
-		for (Usuario usuario : findAll) {
-			System.out.println(usuario);
-		}
+        List<User> findAll = dao.findAll();
+        for (User u : findAll) {
+            System.out.println(u);
+        }
 
-		dao.save(usuario2);
+        dao.save(user);
 
-		System.out.println("-----------------------------------------------");
+        System.out.println("-----------------------------------------------");
 
-		findAll = dao.findAll();
-		for (Usuario usuario : findAll) {
-			System.out.println(usuario);
-		}
-	}
+        findAll = dao.findAll();
+        for (User u : findAll) {
+            System.out.println(u);
+        }
+    }
 
-	@Test
-	public void testEmail() {
-		Usuario findByEmail = dao.findByEmail("franciscosft@gmail.com");
-		assertNotNull(findByEmail);
-	}
+    @Test
+    public void testEmail() {
+        User foundUser = dao.findByEmail("franciscosft@gmail.com");
+        assertNotNull(foundUser);
+    }
 
 }

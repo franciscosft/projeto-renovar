@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coordenada implements Serializable {
+public class Coordinate implements Serializable {
 
-	private Double latitude;
-	private Double longitude;
+    private static final long serialVersionUID = 1L;
+
+    private Double latitude;
+    private Double longitude;
 
 }

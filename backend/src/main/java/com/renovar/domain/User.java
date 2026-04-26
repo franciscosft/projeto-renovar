@@ -18,18 +18,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "senha")
+@ToString(exclude = "password")
 @Entity
-public class Usuario implements Serializable {
+public class User implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private String nome;
-	private String sobrenome;
-	private String email;
-	private String senha;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String name;
+    private String lastName;
+    private String email;
+    private String password;
 
 }

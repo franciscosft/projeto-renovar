@@ -2,100 +2,86 @@ package com.renovar.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.renovar.dao.ColetaDAO;
-import com.renovar.dao.DispositivoDAO;
-import com.renovar.dao.IndicadorDAO;
-import com.renovar.dao.UsuarioDAO;
-import com.renovar.domain.Coleta;
-import com.renovar.domain.Coordenada;
-import com.renovar.domain.Dispositivo;
-import com.renovar.domain.Indicador;
-import com.renovar.domain.Usuario;
-import com.renovar.domain.enums.Unidade;
+import com.renovar.dao.DeviceDAO;
+import com.renovar.dao.IndicatorDAO;
+import com.renovar.dao.ReadingDAO;
+import com.renovar.dao.UserDAO;
+import com.renovar.domain.Coordinate;
+import com.renovar.domain.Device;
+import com.renovar.domain.Indicator;
+import com.renovar.domain.Reading;
+import com.renovar.domain.User;
+import com.renovar.domain.enums.Unit;
 
 @Service
 public class DBService {
-	private final Logger log = LoggerFactory.getLogger(DBService.class);
 
-	private final DispositivoDAO sensorDAO;
+    private final Logger log = LoggerFactory.getLogger(DBService.class);
 
-	private final IndicadorDAO indicadorDAO;
+    private final DeviceDAO deviceDAO;
+    private final IndicatorDAO indicatorDAO;
+    private final ReadingDAO readingDAO;
+    private final UserDAO userDAO;
 
-	private final ColetaDAO coletaDAO;
+    public DBService(DeviceDAO deviceDAO, IndicatorDAO indicatorDAO, ReadingDAO readingDAO, UserDAO userDAO) {
+        this.deviceDAO = deviceDAO;
+        this.indicatorDAO = indicatorDAO;
+        this.readingDAO = readingDAO;
+        this.userDAO = userDAO;
+    }
 
-	private final UsuarioDAO usuarioDAO;
+    public void initializeDatabase() throws InterruptedException {
+        log.info("Creating mock objects");
+        User user = new User(null, "Francisco", "Teixeira", "franciscosft@gmail.com", "123");
+        userDAO.save(user);
 
-	public DBService(DispositivoDAO sensorDAO, IndicadorDAO indicadorDAO, ColetaDAO coletaDAO, UsuarioDAO usuarioDAO) {
-		this.sensorDAO = sensorDAO;
-		this.indicadorDAO = indicadorDAO;
-		this.coletaDAO = coletaDAO;
-		this.usuarioDAO = usuarioDAO;
-	}
+        Coordinate coordinate1 = new Coordinate(-27.599645, -48.518083);
+        Coordinate coordinate2 = new Coordinate(-27.6001426, -48.5182837);
 
-	public void instanciarBancoDeDados() throws InterruptedException {
-		log.info("Criando objetos mock");
-		Usuario usuario = new Usuario(null, "Francisco", "Teixeira", "franciscosft@gmail.com", "123");
-		usuarioDAO.save(usuario);
+        Device device1 = new Device(null, "Device 1", "abc", coordinate1, user);
+        Device device2 = new Device(null, "Device 2", "cdf", coordinate2, user);
 
-		Coordenada coordenada = new Coordenada(-27.599645, -48.518083);
-		Coordenada coordenada2 = new Coordenada(-27.6001426, -48.5182837);
+        Indicator co = new Indicator(null, "CO", Unit.CONCENTRATION, 0.8);
+        Indicator temperature = new Indicator(null, "Thermometer", Unit.TEMPERATURE);
+        Indicator pressure = new Indicator(null, "Atmospheric Pressure", Unit.PRESSURE);
 
-		Dispositivo dispositivo = new Dispositivo(null, "Dispostivo 1", "abc", coordenada, usuario);
-		Dispositivo dispositivo2 = new Dispositivo(null, "Dispostivo 2", "cdf", coordenada2, usuario);
-		usuarioDAO.save(usuario);
+        device1.getIndicators().addAll(Arrays.asList(co, temperature, pressure));
+        device2.getIndicators().addAll(Arrays.asList(temperature, pressure));
 
-		Indicador co = new Indicador(null, "CO", Unidade.CONCENTRACAO, 0.8);
-		Indicador temperatura = new Indicador(null, "Termometro", Unidade.TEMPERATURA);
-		Indicador pressao = new Indicador(null, "Pressao atmosferica", Unidade.PRESSAO);
+        indicatorDAO.saveAll(Arrays.asList(co, temperature, pressure));
+        deviceDAO.saveAll(Arrays.asList(device1, device2));
 
-		// Settando os indicadores que cada sensor vai ter
-		dispositivo.getIndicadores().addAll(Arrays.asList(co, temperatura, pressao));
-		dispositivo2.getIndicadores().addAll(Arrays.asList(temperatura, pressao));
+        log.info("Adding readings");
+        ArrayList<Reading> readings = new ArrayList<>();
+        for (int i = 0; i <= 20; i++) {
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, co));
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, temperature));
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, pressure));
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device2, temperature));
+            Thread.sleep(1000);
+        }
+        log.info("Readings saved");
+        readingDAO.saveAll(readings);
+    }
 
-		indicadorDAO.saveAll(Arrays.asList(co, temperatura, pressao));
-		sensorDAO.saveAll(Arrays.asList(dispositivo, dispositivo2));
-		Calendar instance = Calendar.getInstance();
-		log.info("Adicionando coletas");
-		ArrayList<Coleta> coletas = new ArrayList<>();
-		for (int i = 0; i <= 20; i++) {
-			coletas.add(new Coleta(null, Math.random(), getData(), coordenada, dispositivo, co));
-			coletas.add(new Coleta(null, Math.random(), getData(), coordenada, dispositivo, temperatura));
-			coletas.add(new Coleta(null, Math.random(), getData(), coordenada, dispositivo, pressao));
-			coletas.add(new Coleta(null, Math.random(), getData(), coordenada, dispositivo2, temperatura));
-			Thread.sleep(1000);
-		}
-		log.info("Coletas adicionadas");
+    public Date randomDate() {
+        GregorianCalendar gc = new GregorianCalendar();
+        int year = randBetween(2017, 2018);
+        gc.set(gc.YEAR, year);
+        int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
+        gc.set(gc.DAY_OF_YEAR, dayOfYear);
+        return gc.getTime();
+    }
 
-		coletaDAO.saveAll(coletas);
-	}
-	
-	public Date getData() {
-		 GregorianCalendar gc = new GregorianCalendar();
-
-	        int year = randBetween(2017, 2018);
-
-	        gc.set(gc.YEAR, year);
-
-	        int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
-
-	        gc.set(gc.DAY_OF_YEAR, dayOfYear);
-
-	        System.out.println(gc.get(gc.YEAR) + "-" + (gc.get(gc.MONTH) + 1) + "-" + gc.get(gc.DAY_OF_MONTH));
-	        
-	        return gc.getTime();
-	}
-	
-	 public static int randBetween(int start, int end) {
-	        return start + (int)Math.round(Math.random() * (end - start));
-	    }
+    public static int randBetween(int start, int end) {
+        return start + (int) Math.round(Math.random() * (end - start));
+    }
 
 }

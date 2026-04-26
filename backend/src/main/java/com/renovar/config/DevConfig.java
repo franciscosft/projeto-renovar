@@ -13,23 +13,23 @@ import com.renovar.services.DBService;
 @Configuration
 @Profile("dev")
 public class DevConfig {
-	private final Logger log = LoggerFactory.getLogger(DevConfig.class);
 
+    private final Logger log = LoggerFactory.getLogger(DevConfig.class);
 
-	@Autowired
-	private DBService service;
-	
-	@Value("${spring.jpa.hibernate.ddl-auto}")
-	private String strategy;
-	
-	@Bean
-	public boolean  instanciarBandoDeDados() throws InterruptedException {
-		// Definindo a estratégia para a criação do banco,  se a chave spring.jpa.hibernate.ddl-auto != create  
-		log.info("Estratégia definida: {}", strategy);
-		if(!"create".equals(strategy)) {
-			return false;
-		}
-		service.instanciarBancoDeDados();
-		return true;
-	}
+    @Autowired
+    private DBService service;
+
+    @Value("${spring.jpa.hibernate.ddl-auto}")
+    private String strategy;
+
+    @Bean
+    public boolean initializeDatabase() throws InterruptedException {
+        log.info("DDL strategy: {}", strategy);
+        if (!"create".equals(strategy)) {
+            return false;
+        }
+        service.initializeDatabase();
+        return true;
+    }
+
 }

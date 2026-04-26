@@ -1,6 +1,5 @@
 package com.renovar.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,15 +10,16 @@ import com.renovar.services.DBService;
 @Profile("test")
 public class TestConfig {
 
-	private DBService service;
+    private DBService service;
 
-	public TestConfig(DBService service) {
-		this.service = service;
-	}
+    public TestConfig(DBService service) {
+        this.service = service;
+    }
 
-	@Bean
-	public boolean  instanciarBandoDeDados() throws InterruptedException {
-		service.instanciarBancoDeDados();
-		return true;
-	}
+    @Bean
+    public boolean initializeDatabase() throws InterruptedException {
+        service.initializeDatabase();
+        return true;
+    }
+
 }

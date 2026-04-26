@@ -2,13 +2,14 @@ package com.renovar.services.exceptions;
 
 public class DataIntegrityException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DataIntegrityException(String mensagem) {
-		super(mensagem);
-	}
+    public DataIntegrityException(String message) {
+        super(message);
+    }
 
-	public DataIntegrityException(String mensagem, Throwable cause) {
-		super(mensagem, cause);
-	}
+    public DataIntegrityException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
