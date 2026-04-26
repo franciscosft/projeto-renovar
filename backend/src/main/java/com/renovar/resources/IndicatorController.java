@@ -2,6 +2,7 @@ package com.renovar.resources;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.renovar.domain.Indicator;
+import com.renovar.dto.IndicatorResponseDTO;
 import com.renovar.services.IndicatorService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,18 +41,19 @@ public class IndicatorController {
     })
     @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<?> getIndicator(
+    public ResponseEntity<IndicatorResponseDTO> getIndicator(
             @Parameter(description = "Indicator ID") @PathVariable Integer id) {
-        Indicator indicator = service.findById(id);
-        return ResponseEntity.ok().body(indicator);
+        return ResponseEntity.ok(IndicatorResponseDTO.from(service.findById(id)));
     }
 
     @Operation(summary = "Get all indicators")
     @ApiResponse(responseCode = "200", description = "List of all registered indicators")
     @GetMapping
-    public ResponseEntity<?> getIndicators() {
-        List<Indicator> indicators = service.findAll();
-        return ResponseEntity.ok().body(indicators);
+    public ResponseEntity<List<IndicatorResponseDTO>> getIndicators() {
+        List<IndicatorResponseDTO> dtos = service.findAll().stream()
+                .map(IndicatorResponseDTO::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Create a new indicator")
@@ -71,11 +74,11 @@ public class IndicatorController {
         @ApiResponse(responseCode = "404", description = "Indicator not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateIndicator(
+    public ResponseEntity<Void> updateIndicator(
             @RequestBody Indicator indicator,
             @Parameter(description = "Indicator ID") @PathVariable Integer id) {
         indicator.setId(id);
-        indicator = service.update(indicator);
+        service.update(indicator);
         return ResponseEntity.noContent().build();
     }
 

@@ -36,7 +36,6 @@ public class UserService {
 
     public User update(User user) {
         User existing = findById(user.getId());
-        existing.setName(user.getName());
         existing.setEmail(user.getEmail());
         return dao.save(existing);
     }

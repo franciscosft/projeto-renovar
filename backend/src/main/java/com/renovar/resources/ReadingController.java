@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.renovar.domain.Reading;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.renovar.domain.Reading;
+import com.renovar.config.RabbitMQConfig;
 import com.renovar.dto.ReadingRequestDTO;
 import com.renovar.dto.ReadingResponseDTO;
+import com.renovar.mapper.ReadingMapper;
 import com.renovar.services.ReadingService;
 import com.renovar.util.RenovarUtils;
 
@@ -42,15 +45,20 @@ public class ReadingController {
     @Autowired
     private ReadingService service;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ReadingMapper mapper;
+
     @Operation(summary = "Get reading by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Reading found"),
         @ApiResponse(responseCode = "404", description = "Reading not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Reading> getReading(@PathVariable Integer id) {
-        Reading reading = service.findById(id);
-        return ResponseEntity.ok().body(reading);
+    public ResponseEntity<ReadingResponseDTO> getReading(@PathVariable Integer id) {
+        return ResponseEntity.ok(mapper.toDTO(service.findById(id)));
     }
 
     @Operation(summary = "Get all readings for a device")
@@ -60,7 +68,7 @@ public class ReadingController {
     public ResponseEntity<List<ReadingResponseDTO>> getReadingsByDevice(
             @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
         List<Reading> readings = service.findByDeviceId(deviceId);
-        List<ReadingResponseDTO> result = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
+        List<ReadingResponseDTO> result = readings.stream().map(mapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
@@ -72,7 +80,7 @@ public class ReadingController {
             @Parameter(description = "Device ID") @PathVariable Integer deviceId,
             @Parameter(description = "Indicator ID") @PathVariable Integer indicatorId) {
         List<Reading> readings = service.findByDeviceIdAndIndicatorId(deviceId, indicatorId);
-        List<ReadingResponseDTO> result = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
+        List<ReadingResponseDTO> result = readings.stream().map(mapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
@@ -96,7 +104,7 @@ public class ReadingController {
         Date endDate = RenovarUtils.toEndDate(end);
         log.info("Fetching readings between {} and {}", startDate, endDate);
         List<Reading> readings = service.findByDeviceIdAndIndicatorIdBetweenDates(deviceId, indicatorId, startDate, endDate);
-        List<ReadingResponseDTO> result = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
+        List<ReadingResponseDTO> result = readings.stream().map(mapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
@@ -109,7 +117,7 @@ public class ReadingController {
             @RequestParam(value = "orderBy", defaultValue = "recorded_at") String orderBy,
             @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
         Page<Reading> readings = service.findByDeviceIdPaged(deviceId, page, pageSize, orderBy, direction);
-        Page<ReadingResponseDTO> dtos = readings.map(ReadingResponseDTO::from);
+        Page<ReadingResponseDTO> dtos = readings.map(mapper::toDTO);
         return ResponseEntity.ok().body(dtos);
     }
 
@@ -117,7 +125,7 @@ public class ReadingController {
     @GetMapping("/todas")
     public ResponseEntity<List<ReadingResponseDTO>> getAll() {
         List<Reading> readings = service.findAll();
-        List<ReadingResponseDTO> dtos = readings.stream().map(ReadingResponseDTO::from).collect(Collectors.toList());
+        List<ReadingResponseDTO> dtos = readings.stream().map(mapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok().body(dtos);
     }
 
@@ -127,10 +135,9 @@ public class ReadingController {
         @ApiResponse(responseCode = "404", description = "No readings found for this device")
     })
     @GetMapping("/dispositivo/ultima/{deviceId}")
-    public ResponseEntity<Reading> getLastDeviceReading(
+    public ResponseEntity<ReadingResponseDTO> getLastDeviceReading(
             @Parameter(description = "Device ID") @PathVariable Integer deviceId) {
-        Reading reading = service.getLastDeviceReading(deviceId);
-        return ResponseEntity.ok().body(reading);
+        return ResponseEntity.ok(mapper.toDTO(service.getLastDeviceReading(deviceId)));
     }
 
     @Operation(summary = "Submit a new reading from a device")
@@ -144,6 +151,16 @@ public class ReadingController {
         reading = service.save(reading);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(reading.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @Operation(summary = "Asynchronous reading ingestion via RabbitMQ",
+               description = "Publishes the reading to the queue and returns immediately. The consumer persists it asynchronously.")
+    @ApiResponse(responseCode = "202", description = "Reading accepted for async processing")
+    @PostMapping("/ingest")
+    public ResponseEntity<Void> ingestReading(@RequestBody ReadingRequestDTO dto) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, dto);
+        log.info("Reading queued for device {}, indicator {}", dto.deviceId(), dto.indicatorId());
+        return ResponseEntity.accepted().build();
     }
 
     @Operation(summary = "Test endpoint — echoes the received payload to the log")

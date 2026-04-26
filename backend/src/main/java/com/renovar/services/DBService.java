@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.renovar.dao.DeviceDAO;
@@ -20,6 +21,8 @@ import com.renovar.domain.Reading;
 import com.renovar.domain.User;
 import com.renovar.domain.enums.Unit;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
 public class DBService {
 
@@ -29,17 +32,52 @@ public class DBService {
     private final IndicatorDAO indicatorDAO;
     private final ReadingDAO readingDAO;
     private final UserDAO userDAO;
+    private final Environment environment;
 
-    public DBService(DeviceDAO deviceDAO, IndicatorDAO indicatorDAO, ReadingDAO readingDAO, UserDAO userDAO) {
+    public DBService(DeviceDAO deviceDAO, IndicatorDAO indicatorDAO, ReadingDAO readingDAO,
+                     UserDAO userDAO, Environment environment) {
         this.deviceDAO = deviceDAO;
         this.indicatorDAO = indicatorDAO;
         this.readingDAO = readingDAO;
         this.userDAO = userDAO;
+        this.environment = environment;
     }
+
+    // ── Seed inicial (somente perfil dev, executa uma única vez) ──────────────
+
+    @PostConstruct
+    public void seedInitialData() {
+        boolean isDev = Arrays.asList(environment.getActiveProfiles()).contains("dev");
+        if (!isDev) {
+            return;
+        }
+
+        if (indicatorDAO.count() > 0) {
+            log.info("Database already contains data — skipping initial seed.");
+            return;
+        }
+
+        log.info("Seeding initial dev data...");
+
+        Indicator temperature = new Indicator(null, "Temperature", Unit.TEMPERATURE, 40.0);
+        indicatorDAO.save(temperature);
+
+        User admin = new User(null, "admin@renovar.com");
+        userDAO.save(admin);
+
+        Coordinate coordinate = new Coordinate(-27.5969, -48.5495);
+        Device sensor = new Device(null, "Sensor 01", null, coordinate, admin);
+        sensor.getIndicators().add(temperature);
+        deviceDAO.save(sensor);
+
+        log.info("Seed completed: 1 indicator, 1 user, 1 device.");
+    }
+
+    // ── Mock data (chamado por TestConfig / DevConfig via @Bean) ──────────────
 
     public void initializeDatabase() throws InterruptedException {
         log.info("Creating mock objects");
-        User user = new User(null, "Francisco", "Teixeira", "franciscosft@gmail.com", "123");
+        User user = new User(null, "franciscosft@gmail.com");
         userDAO.save(user);
 
         Coordinate coordinate1 = new Coordinate(-27.599645, -48.518083);
@@ -49,22 +87,22 @@ public class DBService {
         Device device2 = new Device(null, "Device 2", "cdf", coordinate2, user);
 
         Indicator co = new Indicator(null, "CO", Unit.CONCENTRATION, 0.8);
-        Indicator temperature = new Indicator(null, "Thermometer", Unit.TEMPERATURE);
+        Indicator mockTemperature = new Indicator(null, "Thermometer", Unit.TEMPERATURE);
         Indicator pressure = new Indicator(null, "Atmospheric Pressure", Unit.PRESSURE);
 
-        device1.getIndicators().addAll(Arrays.asList(co, temperature, pressure));
-        device2.getIndicators().addAll(Arrays.asList(temperature, pressure));
+        device1.getIndicators().addAll(Arrays.asList(co, mockTemperature, pressure));
+        device2.getIndicators().addAll(Arrays.asList(mockTemperature, pressure));
 
-        indicatorDAO.saveAll(Arrays.asList(co, temperature, pressure));
+        indicatorDAO.saveAll(Arrays.asList(co, mockTemperature, pressure));
         deviceDAO.saveAll(Arrays.asList(device1, device2));
 
         log.info("Adding readings");
         ArrayList<Reading> readings = new ArrayList<>();
         for (int i = 0; i <= 20; i++) {
             readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, co));
-            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, temperature));
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, mockTemperature));
             readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device1, pressure));
-            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device2, temperature));
+            readings.add(new Reading(null, Math.random(), randomDate(), coordinate1, device2, mockTemperature));
             Thread.sleep(1000);
         }
         log.info("Readings saved");

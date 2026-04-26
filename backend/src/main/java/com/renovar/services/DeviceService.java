@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.renovar.dao.DeviceDAO;
 import com.renovar.domain.Device;
 import com.renovar.dto.DeviceDTO;
+import com.renovar.mapper.DeviceMapper;
 import com.renovar.services.exceptions.DataIntegrityException;
 import com.renovar.services.exceptions.ObjectNotFoundException;
 
@@ -28,6 +29,9 @@ public class DeviceService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
 
     public Device findById(Integer id) {
         Optional<Device> result = dao.findById(id);
@@ -70,7 +74,7 @@ public class DeviceService {
 
     public DeviceDTO toDeviceDTO(Device device) {
         log.info("Indicators: {}", device.getIndicators());
-        return DeviceDTO.from(device);
+        return deviceMapper.toDTO(device);
     }
 
 }

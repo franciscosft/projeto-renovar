@@ -2,6 +2,7 @@ package com.renovar.resources;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,18 +41,19 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(
+    public ResponseEntity<UserDTO> getUser(
             @Parameter(description = "User ID") @PathVariable Integer id) {
-        User user = service.findById(id);
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok(UserDTO.from(service.findById(id)));
     }
 
     @Operation(summary = "Get all users")
     @ApiResponse(responseCode = "200", description = "List of all registered users")
     @GetMapping
-    public ResponseEntity<?> getUsers() {
-        List<User> users = service.findAll();
-        return ResponseEntity.ok().body(users);
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        List<UserDTO> dtos = service.findAll().stream()
+                .map(UserDTO::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Register a new user")
@@ -71,24 +73,23 @@ public class UserController {
     public ResponseEntity<Page<UserDTO>> getPage(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "24") Integer pageSize,
-            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+            @RequestParam(value = "orderBy", defaultValue = "email") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-        Page<User> users = service.findPage(page, pageSize, orderBy, direction);
-        Page<UserDTO> dtos = users.map(UserDTO::from);
-        return ResponseEntity.ok().body(dtos);
+        Page<UserDTO> dtos = service.findPage(page, pageSize, orderBy, direction).map(UserDTO::from);
+        return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Update user name and email")
+    @Operation(summary = "Update user email")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "User updated"),
         @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<Void> updateUser(
             @RequestBody User user,
             @Parameter(description = "User ID") @PathVariable Integer id) {
         user.setId(id);
-        user = service.update(user);
+        service.update(user);
         return ResponseEntity.noContent().build();
     }
 

@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.renovar.domain.Device;
 import com.renovar.dto.DeviceDTO;
+import com.renovar.mapper.DeviceMapper;
 import com.renovar.services.DeviceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +44,9 @@ public class DeviceController {
     @Autowired
     private DeviceService service;
 
+    @Autowired
+    private DeviceMapper mapper;
+
     @Operation(summary = "Get device by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Device found"),
@@ -51,9 +55,7 @@ public class DeviceController {
     @GetMapping("/{id}")
     public ResponseEntity<DeviceDTO> getDevice(
             @Parameter(description = "Device ID") @PathVariable Integer id) {
-        Device device = service.findById(id);
-        DeviceDTO dto = service.toDeviceDTO(device);
-        return ResponseEntity.ok().body(dto);
+        return ResponseEntity.ok(mapper.toDTO(service.findById(id)));
     }
 
     @Operation(summary = "Get all devices")
@@ -61,9 +63,8 @@ public class DeviceController {
     @GetMapping("/todos")
     public ResponseEntity<List<DeviceDTO>> getDevices() {
         log.info("Fetching all devices");
-        List<Device> devices = service.findAll();
-        List<DeviceDTO> dtos = devices.stream().map(service::toDeviceDTO).collect(Collectors.toList());
-        return ResponseEntity.ok().body(dtos);
+        List<DeviceDTO> dtos = service.findAll().stream().map(mapper::toDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Register a new device")
@@ -92,7 +93,7 @@ public class DeviceController {
             @Parameter(description = "Device ID") @PathVariable Integer id) {
         log.info("Device: {}", device);
         device.setId(id);
-        device = service.update(device);
+        service.update(device);
         return ResponseEntity.noContent().build();
     }
 
@@ -103,9 +104,8 @@ public class DeviceController {
             @RequestParam(value = "linesPerPage", defaultValue = "10") Integer pageSize,
             @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-        Page<Device> devices = service.findPage(page, pageSize, orderBy, direction);
-        Page<DeviceDTO> dtos = devices.map(DeviceDTO::from);
-        return ResponseEntity.ok().body(dtos);
+        Page<DeviceDTO> dtos = service.findPage(page, pageSize, orderBy, direction).map(mapper::toDTO);
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Delete a device")
