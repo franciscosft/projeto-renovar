@@ -1,36 +1,60 @@
 <div class="page-container">
   <div class="page-header">
-    <button class="back-btn" (click)="goBack()">Voltar</button>
-    <h1>Cadastro</h1>
+    <button class="back-btn" (click)="goBack()">Back</button>
+    <h1>Register</h1>
   </div>
   <div class="page-content">
-    <h3>Preencha o cadastro para se registrar</h3>
-    <form>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nome</label>
-          <input type="text" [(ngModel)]="name" name="name">
-        </div>
-        <div class="form-group">
-          <label>Sobrenome</label>
-          <input type="text" [(ngModel)]="lastName" name="lastName">
-        </div>
+    <h3>Fill in the form to create your account</h3>
+    <form #registerForm="ngForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="name" name="name"
+               required minlength="2" #nameField="ngModel">
+        @if (nameField.touched && nameField.errors?.['required']) {
+          <p class="error-message">Name is required.</p>
+        }
+        @if (nameField.touched && nameField.errors?.['minlength']) {
+          <p class="error-message">Name must be at least 2 characters.</p>
+        }
       </div>
       <div class="form-group">
         <label>E-mail</label>
-        <input type="email" [(ngModel)]="email" name="email">
+        <input type="email" [(ngModel)]="email" name="email"
+               required email #emailField="ngModel">
+        @if (emailField.touched && emailField.errors?.['required']) {
+          <p class="error-message">Email is required.</p>
+        }
+        @if (emailField.touched && emailField.errors?.['email']) {
+          <p class="error-message">Enter a valid email address.</p>
+        }
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Senha</label>
-          <input type="password" [(ngModel)]="password" name="password">
-        </div>
-        <div class="form-group">
-          <label>Confirmar a senha</label>
-          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword">
-        </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password"
+               required minlength="6" #passwordField="ngModel">
+        @if (passwordField.touched && passwordField.errors?.['required']) {
+          <p class="error-message">Password is required.</p>
+        }
+        @if (passwordField.touched && passwordField.errors?.['minlength']) {
+          <p class="error-message">Password must be at least 6 characters.</p>
+        }
       </div>
-      <button type="submit" class="btn btn-primary">Registrar</button>
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword"
+               required #confirmPasswordField="ngModel">
+        @if (confirmPasswordField.touched && confirmPasswordField.errors?.['required']) {
+          <p class="error-message">Please confirm your password.</p>
+        }
+        @if (confirmPasswordField.touched && confirmPassword && confirmPassword !== password) {
+          <p class="error-message">Passwords do not match.</p>
+        }
+      </div>
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+      <button type="submit" class="btn btn-primary"
+              [disabled]="registerForm.invalid || confirmPassword !== password">Register</button>
     </form>
   </div>
 </div>

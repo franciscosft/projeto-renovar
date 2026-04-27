@@ -12,6 +12,7 @@ public class OpenApiConfig {
 
     public static final String SCHEME_SUBSCRIPTION = "X-Subscription-Key";
     public static final String SCHEME_API_KEY      = "X-Api-Key";
+    public static final String SCHEME_BEARER       = "Bearer";
 
     @Bean
     public OpenAPI openAPI() {
@@ -32,7 +33,13 @@ public class OpenApiConfig {
                                         .type(SecurityScheme.Type.APIKEY)
                                         .in(SecurityScheme.In.HEADER)
                                         .name(SCHEME_API_KEY)
-                                        .description("Required for POST /reading/ingest. Pass the value configured in DEVICE_API_KEY.")));
+                                        .description("Required for POST /reading/ingest. Pass the value configured in DEVICE_API_KEY."))
+                        .addSecuritySchemes(SCHEME_BEARER,
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                        .description("JWT obtained from POST /auth/login or /auth/register. Required for POST /devices and POST /indicators.")));
     }
 
 }

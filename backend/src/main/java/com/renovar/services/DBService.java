@@ -7,8 +7,6 @@ import java.util.GregorianCalendar;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +57,7 @@ public class DBService {
         userDAO.save(admin);
 
         Coordinate coordinate = new Coordinate(-27.5969, -48.5495);
-        Device sensor = new Device(null, "Sensor 01", null, coordinate, admin);
+        Device sensor = new Device(null, "Sensor 01", coordinate, admin);
         sensor.getIndicators().add(temperature);
         deviceDAO.save(sensor);
 
@@ -76,8 +74,8 @@ public class DBService {
         Coordinate coordinate1 = new Coordinate(-27.599645, -48.518083);
         Coordinate coordinate2 = new Coordinate(-27.6001426, -48.5182837);
 
-        Device device1 = new Device(null, "Device 1", "abc", coordinate1, user);
-        Device device2 = new Device(null, "Device 2", "cdf", coordinate2, user);
+        Device device1 = new Device(null, "Device 1", coordinate1, user);
+        Device device2 = new Device(null, "Device 2", coordinate2, user);
 
         Indicator co = new Indicator(null, "CO", Unit.CONCENTRATION, 0.8);
         Indicator mockTemperature = new Indicator(null, "Thermometer", Unit.TEMPERATURE);

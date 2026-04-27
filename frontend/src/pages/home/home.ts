@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import * as L from 'leaflet';
 import { DeviceDTO } from '../../models/device.dto';
 import { DeviceService } from '../../services/domain/device.service';
+import { AuthService } from '../../services/auth.service';
 
 // Fix broken default marker icons when bundled by Angular
 const iconDefault = L.icon({
@@ -28,7 +29,8 @@ export class HomePage implements AfterViewInit {
 
   constructor(
     private router: Router,
-    private deviceService: DeviceService
+    private deviceService: DeviceService,
+    private authService: AuthService
   ) {}
 
   ngAfterViewInit() {
@@ -60,5 +62,14 @@ export class HomePage implements AfterViewInit {
         this.router.navigate(['/reading'], { state: { device } });
       });
     });
+  }
+
+  navigateToDeviceRegistration() {
+    this.router.navigate(['/devices/new']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

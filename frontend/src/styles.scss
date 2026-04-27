@@ -105,7 +105,32 @@ button {
   background: #3a7ae0;
 }
 
+.btn-secondary {
+  background: #fff;
+  color: #488aff;
+  border: 1px solid #488aff;
+}
+
+.btn-secondary:hover {
+  background: #f0f4ff;
+}
+
 .btn-block {
   width: 100%;
   display: block;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-bottom: 12px;
 }

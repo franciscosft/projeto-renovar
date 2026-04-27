@@ -13,7 +13,6 @@ public class DeviceMapper {
         return new DeviceDTO(
                 device.getId(),
                 device.getName(),
-                device.getTrackingCode(),
                 new Coordinate(device.getLatitude(), device.getLongitude()),
                 device.getUser().getId(),
                 device.getUser().getEmail(),

@@ -5,17 +5,18 @@ import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 import com.renovar.dao.DeviceDAO;
+import com.renovar.dao.IndicatorDAO;
 import com.renovar.domain.Device;
+import com.renovar.domain.Indicator;
 import com.renovar.dto.DeviceDTO;
 import com.renovar.mapper.DeviceMapper;
 import com.renovar.services.exceptions.DataIntegrityException;
@@ -29,6 +30,8 @@ public class DeviceService {
     private final DeviceDAO dao;
 
     private final UserService userService;
+
+    private final IndicatorDAO indicatorDAO;
 
     private final DeviceMapper deviceMapper;
 
@@ -63,7 +66,14 @@ public class DeviceService {
 
     public Device toDevice(DeviceDTO dto) {
         log.debug("DeviceDTO: {}", dto);
-        return new Device(dto.id(), dto.name(), dto.trackingCode(), dto.coordinate(), userService.findById(dto.userId()));
+        Device device = new Device(dto.id(), dto.name(), dto.coordinate(), userService.findById(dto.userId()));
+        if (dto.indicators() != null && !dto.indicators().isEmpty()) {
+            List<Integer> ids = dto.indicators().stream()
+                    .map(Indicator::getId)
+                    .collect(Collectors.toList());
+            device.getIndicators().addAll(indicatorDAO.findAllById(ids));
+        }
+        return device;
     }
 
     public Page<Device> findPage(Integer page, Integer pageSize, String orderBy, String direction) {

@@ -8,7 +8,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (errorObj.error) {
         errorObj = errorObj.error;
       }
-      console.error('Erro detectado pelo interceptor:', errorObj);
+      console.error('Interceptor error handler:', errorObj);
       return throwError(() => errorObj);
     })
   );

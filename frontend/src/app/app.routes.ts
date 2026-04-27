@@ -1,14 +1,22 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'home',
-    loadComponent: () => import('../pages/home/home').then(m => m.HomePage)
+    loadComponent: () => import('../pages/home/home').then(m => m.HomePage),
+    canActivate: [authGuard]
   },
   {
     path: 'reading',
-    loadComponent: () => import('../pages/coleta/reading').then(m => m.ReadingPage)
+    loadComponent: () => import('../pages/reading/reading').then(m => m.ReadingPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'devices/new',
+    loadComponent: () => import('../pages/devices/device-registration').then(m => m.DeviceRegistrationPage),
+    canActivate: [authGuard]
   },
   {
     path: 'login',
@@ -20,6 +28,6 @@ export const routes: Routes = [
   },
   {
     path: 'documentation',
-    loadComponent: () => import('../pages/documentacao/documentation').then(m => m.DocumentationPage)
+    loadComponent: () => import('../pages/documentation/documentation').then(m => m.DocumentationPage)
   },
 ];

@@ -29,7 +29,6 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String trackingCode;
     private Double latitude;
     private Double longitude;
 
@@ -43,10 +42,9 @@ public class Device {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Device(Integer id, String name, String trackingCode, Coordinate coordinate, User user) {
+    public Device(Integer id, String name, Coordinate coordinate, User user) {
         this.id = id;
         this.name = name;
-        this.trackingCode = trackingCode;
         this.latitude = coordinate.getLatitude();
         this.longitude = coordinate.getLongitude();
         this.user = user;

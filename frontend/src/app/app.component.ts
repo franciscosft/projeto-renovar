@@ -11,7 +11,5 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 export class AppComponent {
   pages = [
     { title: 'Home', path: '/home' },
-    { title: 'Coleta', path: '/reading' },
-    { title: 'Documentação', path: '/documentation' },
   ];
 }

@@ -1,6 +1,7 @@
 .home-container {
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 #map {
@@ -8,14 +9,28 @@
   width: 100%;
 }
 
-#floating-panel {
+.home-actions {
   position: absolute;
-  top: 10px;
-  right: 0;
-  z-index: 5;
-  background-color: #fff;
-  padding: 5px;
-  text-align: center;
-  font-family: 'Roboto', sans-serif;
-  line-height: 30px;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 13px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary-outline {
+  background: #fff;
+  color: #488aff;
+  border: 1px solid #488aff;
+}
+
+.btn-primary-outline:hover {
+  background: #f0f4ff;
 }

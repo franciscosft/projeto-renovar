@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 public record DeviceDTO(
         Integer id,
         @NotEmpty(message = "Device name is required") String name,
-        String trackingCode,
         Coordinate coordinate,
         @NotNull(message = "User id is required") Integer userId,
         String userEmail,

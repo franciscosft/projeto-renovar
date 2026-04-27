@@ -1,19 +1,36 @@
 <div class="page-container">
   <div class="page-header">
-    <button class="back-btn" (click)="goBack()">Voltar</button>
-    <h1>Entrar</h1>
+    <h1>Sign In</h1>
   </div>
   <div class="page-content">
-    <form>
+    <form #loginForm="ngForm" (ngSubmit)="submit()">
       <div class="form-group">
         <label>E-mail</label>
-        <input type="text" [(ngModel)]="email" name="email">
+        <input type="text" [(ngModel)]="email" name="email"
+               required email #emailField="ngModel">
+        @if (emailField.touched && emailField.errors?.['required']) {
+          <p class="error-message">Email is required.</p>
+        }
+        @if (emailField.touched && emailField.errors?.['email']) {
+          <p class="error-message">Enter a valid email address.</p>
+        }
       </div>
       <div class="form-group">
-        <label>Senha</label>
-        <input type="password" [(ngModel)]="password" name="password">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password"
+               required minlength="6" #passwordField="ngModel">
+        @if (passwordField.touched && passwordField.errors?.['required']) {
+          <p class="error-message">Password is required.</p>
+        }
+        @if (passwordField.touched && passwordField.errors?.['minlength']) {
+          <p class="error-message">Password must be at least 6 characters.</p>
+        }
       </div>
-      <button type="submit" class="btn btn-primary">Entrar</button>
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Sign In</button>
     </form>
+    <p class="register-link">Don't have an account? <a href="/register">Register</a></p>
   </div>
 </div>
