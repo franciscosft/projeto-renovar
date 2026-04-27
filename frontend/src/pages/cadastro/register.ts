@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: 'register.html',
   styleUrl: 'register.scss'
 })
@@ -21,9 +23,21 @@ export class RegisterPage {
 
   submit() {
     this.errorMessage = '';
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'As senhas não coincidem.';
+      return;
+    }
+
     this.authService.register(this.name, this.email, this.password).subscribe({
       next: () => this.router.navigate(['/login']),
-      error: () => this.errorMessage = 'Registration failed. Please try again.'
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 409) {
+          this.errorMessage = 'E-mail já cadastrado.';
+        } else {
+          this.errorMessage = 'Falha no cadastro. Por favor, tente novamente.';
+        }
+      }
     });
   }
 

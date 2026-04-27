@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.renovar.services.exceptions.DataIntegrityException;
 import com.renovar.services.exceptions.ObjectNotFoundException;
+import com.renovar.services.exceptions.UserAlreadyExistsException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,13 @@ public class ResourcesExceptionHandler {
     public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request) {
         StandardError error = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<StandardError> userAlreadyExists(UserAlreadyExistsException e, HttpServletRequest request) {
+        ValidationError error = new ValidationError(HttpStatus.CONFLICT.value(), "E-mail already exists", System.currentTimeMillis());
+        error.addError("email", e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

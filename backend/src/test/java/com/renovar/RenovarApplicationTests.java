@@ -27,6 +27,7 @@ public class RenovarApplicationTests {
 
     @Test
     public void contextLoads() {
+        System.out.println("[DEBUG_LOG] Context loaded successfully");
     }
 
     @Test

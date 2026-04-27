@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import com.renovar.dao.UserDAO;
 import com.renovar.domain.User;
+import com.renovar.services.exceptions.DataIntegrityException;
 import com.renovar.services.exceptions.ObjectNotFoundException;
+import com.renovar.services.exceptions.UserAlreadyExistsException;
 
 @Service
 @AllArgsConstructor
@@ -32,11 +34,18 @@ public class UserService {
 
     public User save(User user) {
         user.setId(null);
+        if (dao.findByEmail(user.getEmail()) != null) {
+            throw new UserAlreadyExistsException("E-mail already exists");
+        }
         return dao.save(user);
     }
 
     public User update(User user) {
         User existing = findById(user.getId());
+        User userWithEmail = dao.findByEmail(user.getEmail());
+        if (userWithEmail != null && !userWithEmail.getId().equals(existing.getId())) {
+            throw new UserAlreadyExistsException("E-mail already exists");
+        }
         existing.setEmail(user.getEmail());
         return dao.save(existing);
     }
