@@ -9,6 +9,6 @@ export class IndicatorService {
   constructor(private http: HttpClient) {}
 
   findById(indicatorId: number): Observable<IndicatorDTO> {
-    return this.http.get<IndicatorDTO>(`${API_CONFIG.baseUrl}/indicadores/${indicatorId}`);
+    return this.http.get<IndicatorDTO>(`${API_CONFIG.baseUrl}/indicators/${indicatorId}`);
   }
 }

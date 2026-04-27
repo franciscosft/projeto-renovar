@@ -9,7 +9,7 @@ export class ReadingService {
   constructor(private http: HttpClient) {}
 
   findByDevice(deviceId: string): Observable<ReadingDTO[]> {
-    return this.http.get<ReadingDTO[]>(`${API_CONFIG.baseUrl}/coletas/dispositivo/${deviceId}`);
+    return this.http.get<ReadingDTO[]>(`${API_CONFIG.baseUrl}/reading/device/${deviceId}`);
   }
 
   findByDeviceAndIndicator(
@@ -19,10 +19,10 @@ export class ReadingService {
     endDate: string
   ): Observable<ReadingDTO[]> {
     if (!startDate && !endDate) {
-      return this.http.get<ReadingDTO[]>(`${API_CONFIG.baseUrl}/coletas/${deviceId}/${indicatorId}`);
+      return this.http.get<ReadingDTO[]>(`${API_CONFIG.baseUrl}/reading/${deviceId}/${indicatorId}`);
     }
     return this.http.get<ReadingDTO[]>(
-      `${API_CONFIG.baseUrl}/coletas/intervalo/?idDispositivo=${deviceId}&idIndicador=${indicatorId}&dataInicio=${startDate}&dataFim=${endDate}`
+      `${API_CONFIG.baseUrl}/reading/range?deviceId=${deviceId}&indicatorId=${indicatorId}&startDate=${startDate}&endDate=${endDate}`
     );
   }
 }

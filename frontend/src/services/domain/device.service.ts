@@ -9,6 +9,6 @@ export class DeviceService {
   constructor(private http: HttpClient) {}
 
   findAll(): Observable<DeviceDTO[]> {
-    return this.http.get<DeviceDTO[]>(`${API_CONFIG.baseUrl}/dispositivo/todos`);
+    return this.http.get<DeviceDTO[]>(`${API_CONFIG.baseUrl}/devices/all`);
   }
 }
