@@ -3,14 +3,14 @@ import { Router } from '@angular/router';
 import { DocumentationService } from '../../services/domain/documentation.service';
 
 @Component({
-  selector: 'app-documentacao',
+  selector: 'app-documentation',
   standalone: true,
-  templateUrl: 'documentacao.html',
-  styleUrl: 'documentacao.scss'
+  templateUrl: 'documentation.html',
+  styleUrl: 'documentation.scss'
 })
-export class DocumentacaoPage implements OnInit {
-  titulo = '';
-  texto = '';
+export class DocumentationPage implements OnInit {
+  pageTitle = '';
+  pageContent = '';
 
   constructor(
     private router: Router,
@@ -20,14 +20,14 @@ export class DocumentacaoPage implements OnInit {
   ngOnInit() {
     this.documentationService.findDocumentation().subscribe({
       next: res => {
-        this.titulo = res.title.rendered;
-        this.texto = res.content.rendered;
+        this.pageTitle = res.title.rendered;
+        this.pageContent = res.content.rendered;
       },
       error: () => {}
     });
   }
 
-  voltar() {
+  goBack() {
     this.router.navigate(['/home']);
   }
 }

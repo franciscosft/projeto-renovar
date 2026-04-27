@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { DispositivoDTO } from '../../models/dispositivo.dto';
-import { IndicadorDTO } from '../../models/indicador.dto';
-import { ColetaDTO } from '../../models/coleta.dto';
-import { ColetaService } from '../../services/domain/coleta.service';
-import { IndicadorService } from '../../services/domain/indicador.service';
+import { DeviceDTO } from '../../models/device.dto';
+import { IndicatorDTO } from '../../models/indicator.dto';
+import { ReadingDTO } from '../../models/reading.dto';
+import { ReadingService } from '../../services/domain/reading.service';
+import { IndicatorService } from '../../services/domain/indicator.service';
 // import * as HighStock from 'highcharts/highstock';
 
 declare var require: any;
@@ -15,48 +15,48 @@ declare var require: any;
 // require('highcharts/modules/export-data')(hcharts);
 
 @Component({
-  selector: 'app-coleta',
+  selector: 'app-reading',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: 'coleta.html',
-  styleUrl: 'coleta.scss'
+  templateUrl: 'reading.html',
+  styleUrl: 'reading.scss'
 })
-export class ColetaPage implements OnInit {
-  dispositivo!: DispositivoDTO;
-  coletas: ColetaDTO[] = [];
-  selectedIndicador: IndicadorDTO | null = null;
-  event = { inicio: '', fim: '' };
+export class ReadingPage implements OnInit {
+  device!: DeviceDTO;
+  readings: ReadingDTO[] = [];
+  selectedIndicator: IndicatorDTO | null = null;
+  event = { startDate: '', endDate: '' };
 
   constructor(
     private router: Router,
-    private coletaService: ColetaService,
-    private indicadorService: IndicadorService
+    private readingService: ReadingService,
+    private indicatorService: IndicatorService
   ) {}
 
   ngOnInit() {
-    this.dispositivo = history.state.dispositivo;
+    this.device = history.state.device;
   }
 
-  buscarColetas() {
-    if (!this.selectedIndicador) return;
-    const idIndicador = +this.selectedIndicador.id;
+  fetchReadings() {
+    if (!this.selectedIndicator) return;
+    const indicatorId = +this.selectedIndicator.id;
 
     forkJoin({
-      indicador: this.indicadorService.findById(idIndicador),
-      coletas: this.coletaService.findAllByDispositivoIndidicador(
-        this.dispositivo.id, idIndicador, this.event.inicio, this.event.fim
+      indicator: this.indicatorService.findById(indicatorId),
+      readings: this.readingService.findByDeviceAndIndicator(
+        this.device.id, indicatorId, this.event.startDate, this.event.endDate
       )
     }).subscribe({
-      next: ({ indicador, coletas }) => {
-        this.coletas = coletas;
-        const medidas = coletas.map(c => [c.data, c.medida]);
-        // this.renderizar(indicador, medidas);
+      next: ({ indicator, readings }) => {
+        this.readings = readings;
+        const dataPoints = readings.map(r => [r.timestamp, r.value]);
+        // this.renderChart(indicator, dataPoints);
       },
       error: () => {}
     });
   }
 
-  // renderizar(indicador: IndicadorDTO, medidas: any[]): void {
+  // renderChart(indicator: IndicatorDTO, dataPoints: any[]): void {
   //   HighStock.setOptions({
   //     lang: {
   //       loading: 'Aguarde...',
@@ -88,14 +88,14 @@ export class ColetaPage implements OnInit {
   //       csv: { dateFormat: '%Y-%m-%d %H:%M:%S', decimalPoint: '.' },
   //       fallbackToExportServer: false
   //     },
-  //     title: { text: this.dispositivo.nome },
+  //     title: { text: this.device.name },
   //     subtitle: {
-  //       text: `Latitude: ${this.dispositivo.coordenada.latitude}, Longitude: ${this.dispositivo.coordenada.longitude}`
+  //       text: `Latitude: ${this.device.coordinate.latitude}, Longitude: ${this.device.coordinate.longitude}`
   //     },
   //     navigator: { margin: 60 },
   //     yAxis: {
   //       plotLines: [{
-  //         value: indicador.limite,
+  //         value: indicator.limit,
   //         color: 'red',
   //         dashStyle: 'shortdash',
   //         width: 2,
@@ -107,15 +107,15 @@ export class ColetaPage implements OnInit {
   //       labels: { format: '{value: %H:%M:%S}' }
   //     },
   //     series: [{
-  //       name: indicador.nome,
-  //       data: medidas,
+  //       name: indicator.name,
+  //       data: dataPoints,
   //       pointStart: Date.UTC(2010, 0, 1),
   //       tooltip: { valueDecimals: 2 }
   //     }]
   //   } as any);
   // }
 
-  voltar() {
+  goBack() {
     this.router.navigate(['/home']);
   }
 }

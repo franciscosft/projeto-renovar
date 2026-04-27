@@ -1,27 +1,27 @@
 <div class="page-container">
   <div class="page-header">
-    <button class="back-btn" (click)="voltar()">Fechar</button>
-    <h1>{{ dispositivo?.nome }}</h1>
+    <button class="back-btn" (click)="goBack()">Fechar</button>
+    <h1>{{ device?.name }}</h1>
   </div>
   <div class="page-content">
     <div class="form-group">
       <label>Selecionar indicador</label>
-      <select [(ngModel)]="selectedIndicador" name="indicador">
+      <select [(ngModel)]="selectedIndicator" name="indicator">
         <option [ngValue]="null" disabled>Selecione...</option>
-        @for (item of dispositivo?.indicadores; track item.id) {
-          <option [ngValue]="item">{{ item.nome }}</option>
+        @for (item of device?.indicators; track item.id) {
+          <option [ngValue]="item">{{ item.name }}</option>
         }
       </select>
     </div>
     <div class="form-group">
       <label>Início das coletas</label>
-      <input type="date" [(ngModel)]="event.inicio" name="inicio">
+      <input type="date" [(ngModel)]="event.startDate" name="startDate">
     </div>
     <div class="form-group">
       <label>Fim das coletas</label>
-      <input type="date" [(ngModel)]="event.fim" name="fim">
+      <input type="date" [(ngModel)]="event.endDate" name="endDate">
     </div>
-    <button class="btn btn-primary" (click)="buscarColetas()" [disabled]="!selectedIndicador">
+    <button class="btn btn-primary" (click)="fetchReadings()" [disabled]="!selectedIndicator">
       Buscar
     </button>
 <!--    <div id="container" class="chart-container"></div>-->

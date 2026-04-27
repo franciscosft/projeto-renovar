@@ -3,22 +3,22 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-cadastro',
+  selector: 'app-register',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: 'cadastro.html',
-  styleUrl: 'cadastro.scss'
+  templateUrl: 'register.html',
+  styleUrl: 'register.scss'
 })
-export class CadastroPage {
-  nome = '';
-  sobrenome = '';
+export class RegisterPage {
+  name = '';
+  lastName = '';
   email = '';
-  senha = '';
-  confirmarSenha = '';
+  password = '';
+  confirmPassword = '';
 
   constructor(private router: Router) {}
 
-  voltar() {
+  goBack() {
     this.router.navigate(['/home']);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DispositivoDTO } from '../../models/dispositivo.dto';
-import { DispositivoService } from '../../services/domain/dispositivo.service';
+import { DeviceDTO } from '../../models/device.dto';
+import { DeviceService } from '../../services/domain/device.service';
 
 declare var google: any;
 
@@ -19,34 +19,34 @@ export class HomePage implements AfterViewInit {
 
   constructor(
     private router: Router,
-    private dispositivoService: DispositivoService
+    private deviceService: DeviceService
   ) {}
 
   ngAfterViewInit() {
-    this.dispositivoService.findAll().subscribe({
+    this.deviceService.findAll().subscribe({
       next: response => this.initMap(response),
       error: () => {}
     });
   }
 
-  initMap(dispositivos: DispositivoDTO[]) {
+  initMap(devices: DeviceDTO[]) {
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
       center: { lat: -27.6001426, lng: -48.5182837 },
       zoom: 18,
     });
 
-    dispositivos.forEach(dispositivo => {
+    devices.forEach(device => {
       const marker = new google.maps.Marker({
         position: {
-          lat: +dispositivo.coordenada.latitude,
-          lng: +dispositivo.coordenada.longitude
+          lat: +device.coordinate.latitude,
+          lng: +device.coordinate.longitude
         },
         map: this.map,
-        title: dispositivo.nome
+        title: device.name
       });
 
       marker.addListener('click', () => {
-        this.router.navigate(['/coleta'], { state: { dispositivo } });
+        this.router.navigate(['/reading'], { state: { device } });
       });
     });
   }

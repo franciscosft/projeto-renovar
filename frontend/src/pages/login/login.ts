@@ -11,11 +11,11 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginPage {
   email = '';
-  senha = '';
+  password = '';
 
   constructor(private router: Router) {}
 
-  voltar() {
+  goBack() {
     this.router.navigate(['/home']);
   }
 }

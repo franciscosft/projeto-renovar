@@ -7,19 +7,19 @@ export const routes: Routes = [
     loadComponent: () => import('../pages/home/home').then(m => m.HomePage)
   },
   {
-    path: 'coleta',
-    loadComponent: () => import('../pages/coleta/coleta').then(m => m.ColetaPage)
+    path: 'reading',
+    loadComponent: () => import('../pages/coleta/reading').then(m => m.ReadingPage)
   },
   {
     path: 'login',
     loadComponent: () => import('../pages/login/login').then(m => m.LoginPage)
   },
   {
-    path: 'cadastro',
-    loadComponent: () => import('../pages/cadastro/cadastro').then(m => m.CadastroPage)
+    path: 'register',
+    loadComponent: () => import('../pages/cadastro/register').then(m => m.RegisterPage)
   },
   {
-    path: 'documentacao',
-    loadComponent: () => import('../pages/documentacao/documentacao').then(m => m.DocumentacaoPage)
+    path: 'documentation',
+    loadComponent: () => import('../pages/documentacao/documentation').then(m => m.DocumentationPage)
   },
 ];
